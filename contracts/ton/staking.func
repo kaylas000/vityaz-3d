@@ -1,0 +1,94 @@
+;; VITYAZ Token Staking Contract
+;; Earn passive income by staking $VITYAZ
+;; APY: 25% (30 days), 50% (90 days), 75% (180 days), 100% (365 days)
+
+#include "stdlib.fc";
+
+(slice, int, int, int, cell) load_staking_data() inline {
+    var ds = get_data().begin_parse();
+    return (
+        ds~load_msg_addr(),  ;; owner
+        ds~load_coins(),     ;; total_staked
+        ds~load_coins(),     ;; reward_pool
+        ds~load_uint(32),    ;; last_update
+        ds~load_dict(267)    ;; stakes
+    );
+}
+
+() save_staking_data(slice owner, int total_staked, int reward_pool, int last_update, cell stakes) impure inline {
+    set_data(begin_cell()
+        .store_slice(owner)
+        .store_coins(total_staked)
+        .store_coins(reward_pool)
+        .store_uint(last_update, 32)
+        .store_dict(stakes)
+        .end_cell());
+}
+
+;; Stake tokens
+() stake(int amount, int lock_period) impure {
+    var (owner, total_staked, reward_pool, last_update, stakes) = load_staking_data();
+    var ds = get_c3().begin_parse();
+    var staker = ds~load_msg_addr();
+    
+    ;; Calculate APY based on lock period
+    ;; lock_period: 1 = 30 days (25% APY), 2 = 90 days (50% APY), etc.
+    var apy = 25 * lock_period;
+    
+    var stake_info = begin_cell()
+        .store_slice(staker)
+        .store_coins(amount)
+        .store_uint(now(), 32)          ;; stake_timestamp
+        .store_uint(now() + lock_period * 30 * 86400, 32)  ;; unlock_timestamp
+        .store_uint(apy, 16)             ;; apy_percent
+        .end_cell();
+    
+    ;; Store stake
+    var stake_id = hash(begin_cell().store_slice(staker).store_uint(now(), 32).end_cell());
+    stakes = udict_set_builder(stakes, 256, stake_id, stake_info);
+    
+    total_staked += amount;
+    save_staking_data(owner, total_staked, reward_pool, last_update, stakes);
+}
+
+;; Claim rewards
+() claim_rewards(int stake_id) impure {
+    var (owner, total_staked, reward_pool, last_update, stakes) = load_staking_data();
+    var (stake, ok) = udict_get?(stakes, 256, stake_id);
+    
+    throw_unless(404, ok);  ;; Stake not found
+    
+    var st = stake~load_slice();
+    var staker = st~load_msg_addr();
+    var amount = st~load_coins();
+    var stake_timestamp = st~load_uint(32);
+    var unlock_timestamp = st~load_uint(32);
+    var apy = st~load_uint(16);
+    
+    throw_unless(403, now() >= unlock_timestamp);  ;; Not yet unlocked
+    
+    ;; Calculate rewards
+    var reward_period_days = (now() - stake_timestamp) / 86400;
+    var daily_reward = amount * apy / (36500);  ;; APY / 365
+    var total_reward = daily_reward * reward_period_days;
+    
+    throw_unless(102, reward_pool >= total_reward);  ;; Insufficient reward pool
+    
+    ;; Send rewards + principal
+    send_raw_message(
+        begin_cell()
+            .store_uint(0x18, 6)
+            .store_slice(staker)
+            .store_coins(amount + total_reward)
+            .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+            .end_cell(),
+        3
+    );
+    
+    ;; Remove stake and update data
+    stakes~udict_delete?(256, stake_id);
+    total_staked -= amount;
+    reward_pool -= total_reward;
+    
+    save_staking_data(owner, total_staked, reward_pool, now(), stakes);
+}

@@ -1,0 +1,69 @@
+;; VITYAZ NFT Marketplace Contract
+;; For trading Operator, Weapon, Equipment, and Base NFTs
+
+#include "stdlib.fc";
+
+(slice, int, cell) load_marketplace_data() inline {
+    var ds = get_data().begin_parse();
+    return (
+        ds~load_msg_addr(),  ;; owner
+        ds~load_coins(),     ;; fee_percent (e.g., 250 = 2.5%)
+        ds~load_dict(267)    ;; listings
+    );
+}
+
+() save_marketplace_data(slice owner, int fee_percent, cell listings) impure inline {
+    set_data(begin_cell()
+        .store_slice(owner)
+        .store_coins(fee_percent)
+        .store_dict(listings)
+        .end_cell());
+}
+
+;; Create listing
+() create_listing(int token_id, int price, slice seller) impure {
+    var (owner, fee_percent, listings) = load_marketplace_data();
+    
+    var listing = begin_cell()
+        .store_slice(seller)
+        .store_coins(price)
+        .store_uint(now(), 32)  ;; timestamp
+        .end_cell();
+    
+    listings = udict_set_builder(listings, 267, token_id, listing);
+    save_marketplace_data(owner, fee_percent, listings);
+}
+
+;; Buy NFT
+() buy_nft(int token_id) impure {
+    var (owner, fee_percent, listings) = load_marketplace_data();
+    var (listing, ok) = udict_get?(listings, 267, token_id);
+    
+    throw_unless(404, ok);  ;; Listing not found
+    
+    var ls = listing~load_slice();
+    var seller = ls~load_msg_addr();
+    var price = ls~load_coins();
+    
+    var buyer_amount = get_balance();
+    throw_unless(102, buyer_amount >= price);  ;; Insufficient balance
+    
+    ;; Calculate fees
+    var marketplace_fee = price * fee_percent / 10000;
+    var seller_amount = price - marketplace_fee;
+    
+    ;; Send to seller
+    send_raw_message(
+        begin_cell()
+            .store_uint(0x18, 6)  ;; flags
+            .store_slice(seller)
+            .store_coins(seller_amount)
+            .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+            .end_cell(),
+        3  ;; mode
+    );
+    
+    ;; Remove listing
+    listings~udict_set(267, token_id, begin_cell().end_cell());
+    save_marketplace_data(owner, fee_percent, listings);
+}

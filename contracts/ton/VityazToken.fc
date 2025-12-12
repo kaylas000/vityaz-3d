@@ -1,0 +1,117 @@
+;; VITYAZ Token Contract (TEP-74 Standard)
+;; $VITYAZ - VityazCoin for VITYAZ: Special Operations
+
+#include "stdlib.fc";
+
+(slice, int, cell, cell) load_data() inline {
+    var ds = get_data().begin_parse();
+    return (
+        ds~load_msg_addr(),  ;; owner_address
+        ds~load_coins(),     ;; total_supply
+        ds~load_dict(267),   ;; balances
+        ds~load_dict(267)    ;; allowances
+    );
+}
+
+() save_data(slice owner_address, int total_supply, cell balances, cell allowances) impure inline {
+    set_data(begin_cell()
+        .store_slice(owner_address)
+        .store_coins(total_supply)
+        .store_dict(balances)
+        .store_dict(allowances)
+        .end_cell());
+}
+
+;; Initialize token
+() init_token(int total_supply) {
+    var (owner_address, supply, balances, allowances) = load_data();
+    supply = total_supply * 1000000000;  ;; 9 decimals
+    
+    balances = udict_set_builder(
+        balances,
+        267,
+        owner_address,
+        begin_cell().store_coins(supply).end_cell()
+    );
+    
+    save_data(owner_address, supply, balances, allowances);
+}
+
+;; Get balance of address
+int balance_of(slice account) method_id {
+    var (_, _, balances, _) = load_data();
+    var (balance, ok) = udict_get?(balances, 267, account);
+    
+    if (ok == 0) {
+        return 0;
+    }
+    
+    return balance~load_coins();
+}
+
+;; Transfer tokens
+() transfer(slice from_address, slice to_address, int amount) impure {
+    var (owner_address, total_supply, balances, allowances) = load_data();
+    
+    ;; Check balance
+    var from_balance = balance_of(from_address);
+    throw_if(102, from_balance < amount);
+    
+    ;; Update balances
+    balances = udict_set_builder(
+        balances,
+        267,
+        from_address,
+        begin_cell().store_coins(from_balance - amount).end_cell()
+    );
+    
+    var to_balance = balance_of(to_address);
+    balances = udict_set_builder(
+        balances,
+        267,
+        to_address,
+        begin_cell().store_coins(to_balance + amount).end_cell()
+    );
+    
+    save_data(owner_address, total_supply, balances, allowances);
+}
+
+;; Mint new tokens (only owner)
+() mint(int amount) impure {
+    var (owner_address, total_supply, balances, allowances) = load_data();
+    var ds = get_c3().begin_parse();
+    var sender = ds~load_msg_addr();
+    
+    throw_unless(73, equal_slices(sender, owner_address));
+    
+    var owner_balance = balance_of(owner_address);
+    balances = udict_set_builder(
+        balances,
+        267,
+        owner_address,
+        begin_cell().store_coins(owner_balance + amount).end_cell()
+    );
+    
+    total_supply += amount;
+    save_data(owner_address, total_supply, balances, allowances);
+}
+
+;; Burn tokens
+() burn(int amount) impure {
+    var (owner_address, total_supply, balances, allowances) = load_data();
+    var ds = get_c3().begin_parse();
+    var sender = ds~load_msg_addr();
+    
+    var sender_balance = balance_of(sender);
+    throw_if(102, sender_balance < amount);
+    
+    balances = udict_set_builder(
+        balances,
+        267,
+        sender,
+        begin_cell().store_coins(sender_balance - amount).end_cell()
+    );
+    
+    total_supply -= amount;
+    save_data(owner_address, total_supply, balances, allowances);
+}
