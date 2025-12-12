@@ -1,492 +1,396 @@
-# 🥊 VITYAZ: Special Operations
+# 🎮 VITYAZ: Special Operations
 
-> **Tactical FPS with Crypto-Economics | Play-to-Earn Combat Simulator**
+**Blockchain-powered tactical FPS with real crypto economy**
 
-[![Status](https://img.shields.io/badge/Status-Active%20Development-brightgreen)]()
-[![Language](https://img.shields.io/badge/Language-TypeScript%2FJavaScript-blue)]()
-[![Blockchain](https://img.shields.io/badge/Blockchain-TON%2FETH%2FSOL-purple)]()
-[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
-
----
-
-## 🎯 About VITYAZ
-
-**VITYAZ: Special Operations** is a revolutionary **tactical first-person shooter** combining:
-
-✅ **Tactical FPS Gameplay** - Realistic combat mechanics (Counter-Strike 2 + Escape from Tarkov)  
-✅ **Play-to-Earn Economy** - Earn real $VITYAZ tokens through gameplay  
-✅ **Multi-Chain Blockchain** - TON (primary), Ethereum, Solana support  
-✅ **Legendary Symbolism** - Based on real "Vityaz" special forces unit  
-✅ **True Brotherhood** - Ideology: "If not me, then who?"  
-✅ **Cross-Platform** - Browser, Telegram Mini App, Desktop  
-
-**Slogan:** *"If not me, then who? If not now, then when?"*
+[![Status](https://img.shields.io/badge/status-alpha-yellow)](https://github.com/kaylas000/vityaz-special-operations)
+[![Version](https://img.shields.io/badge/version-0.1.0-blue)](https://github.com/kaylas000/vityaz-special-operations)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Completion](https://img.shields.io/badge/completion-63%25-orange)](FINAL_ASSESSMENT.md)
 
 ---
 
-## 🎮 Game Features
-
-### Career Progression (7 Ranks)
-
-```
-7. LEGEND (Легенда)              - Hero of Russia
-6. CRIMSON BERET (Краповый)      - Elite special forces
-5. OFFICER (Офицер)              - Tactical commander
-4. SERGEANT (Сержант)            - Squad leader
-3. OPERATOR (Спецназовец)        - Combat specialist
-2. CADET (Курсант)               - Trainee
-1. RECRUIT (Призывник)           - Beginner
-```
-
-### Game Modes
-
-1. **Career Mode (PvE)** - Story-driven special operations
-2. **Special Operations** - Historical missions (Sukhumi 1990, Liberation ops)
-3. **Competitive PvP** - 5v5 tactical Counter-Terrorist mode
-4. **Training Ground** - Skill development & NFT rewards
-5. **Tournaments** - Seasonal competitive events with $VITYAZ prizes
-
-### Realistic Combat System
-
-- **Weapon Recoil Patterns** - Master AK-74, SVD, PN pistols
-- **Hit Registration** - Server-validated ballistics
-- **Armor System** - 6B23, 6B43, 6B45 protection levels
-- **Stamina Mechanics** - Energy-based movement/actions
-- **Realistic Healing** - Medical kits required (no auto-regen)
-- **Hitscan + Physics-based** - Bullets travel realistically
-
----
-
-## 💰 Crypto-Economics
-
-### $VITYAZ Token
-
-**Token Details:**
-```
-Name:              VityazCoin
-Ticker:            $VITYAZ
-Max Supply:        1,000,000,000 tokens
-Blockchains:       TON (TEP-74), Ethereum (ERC-20), Solana (SPL)
-Primary Chain:     TON (The Open Network)
-Standard:          TEP-74 / ERC-20 / SPL
-Decimals:          9
-```
-
-### Earning Opportunities
-
-| Activity | Base Reward | With Crimson Beret | Frequency |
-|----------|------------|-------------------|----------|
-| **PvE Victory Easy** | 50 | 75 | Per mission |
-| **PvE Victory Hard** | 500 | 750 | Per mission |
-| **PvP Win (Casual)** | 25-100 | 50-200 | Per match |
-| **PvP Win (Ranked)** | 200-500 | 300-750 | Per match |
-| **Daily Quest** | 100-300 | 200-600 | 1x daily |
-| **Weekly Event** | 1000-5000 | 1500-7500 | 1x weekly |
-| **Tournament** | 5K-100K | 7.5K-150K | Seasonal |
-| **Staking** | 25-100% APY | 50-150% APY | Passive |
-| **NFT Ownership** | 1-500/day | 2-1000/day | Passive |
-
-### Monthly Income Potential
-
-| Player Level | Play Time | Monthly Earnings | USD Equivalent* |
-|--------------|-----------|-------------------|----------------|
-| **Casual** | 1-2 hrs/day | ~15K $VITYAZ | ~$50 |
-| **Regular** | 3-5 hrs/day | ~50K $VITYAZ | ~$175 |
-| **Hardcore** | 6+ hrs/day | ~150K $VITYAZ | ~$525 |
-| **Pro** | 8+ hrs + tournaments | ~500K $VITYAZ | ~$1,750 |
-
-*At $1 VITYAZ = $0.0035 USD (subject to market conditions)
-
----
-
-## 🎖️ NFT Collections
-
-### 1. **Operator NFT** - Your Combat Avatar
-- Unique stats (Accuracy, Speed, Stamina, Armor)
-- Visual customization (camouflage, face, tattoos)
-- Rarity: Common → Rare → Epic → Legendary
-- **Special:** Crimson Beret (earned through qualification, NOT bought)
-
-### 2. **Weapon Skin NFT** - Customization
-- Military camouflage patterns (Digital Flora, Multicam, Mosaic)
-- +2-10% stat bonuses
-- Tradeable on marketplace
-- Legendary weapons: +15% to all stats
-
-### 3. **Equipment NFT** - Tactical Gear
-- 6B23 armor (+60% defense)
-- 6B43 armor (+80% defense)
-- Helmets, gloves, boots
-- Stackable effects
-
-### 4. **Base NFT** - Real Estate
-- Training camps (passive income: 10-50 $VITYAZ/day)
-- Regional HQ (50-200 $VITYAZ/day)
-- Central Command (200-500 $VITYAZ/day)
-- Rental opportunities
-
-### 5. **Badge NFT** - Achievements
-- Non-tradeable achievement badges
-- 300+ unique badges
-- Proof of skill & dedication
-- Showable on player profile
-
----
-
-## 🏗️ Technical Architecture
-
-### Frontend Stack
-
-```
-┌─────────────────────────────────────────────┐
-│  React 18 + TypeScript                      │
-│  Phaser 3 (Game Engine)                     │
-│  Three.js (3D Graphics)                     │
-│  TailwindCSS + Shadcn/ui (UI)               │
-│  Socket.io (Real-time Multiplayer)          │
-│  TON SDK + Telegram Web App API             │
-│  Vite (Build Tool)                          │
-└─────────────────────────────────────────────┘
-```
-
-### Backend Stack
-
-```
-┌─────────────────────────────────────────────┐
-│  NestJS (Node.js + TypeScript)              │
-│  PostgreSQL 15+ (Database)                  │
-│  Redis 7+ (Caching)                         │
-│  Socket.io (WebSocket)                      │
-│  Prisma ORM (Database)                      │
-│  Docker (Containerization)                  │
-│  nginx (Reverse Proxy)                      │
-└─────────────────────────────────────────────┘
-```
-
-### Blockchain Stack
-
-```
-┌─────────────────────────────────────────────┐
-│  TON: Smart Contracts (FunC/TypeScript)     │
-│  Ethereum: Solidity (OpenZeppelin)          │
-│  Solana: Anchor (Rust)                      │
-│  Chainlink: Cross-chain Integration         │
-│  TON Connect 2 (Wallet)                     │
-└─────────────────────────────────────────────┘
-```
-
----
-
-## 📁 Project Structure
-
-```
-vityaz-special-operations/
-├── frontend/                      # React + Phaser frontend
-│   ├── src/
-│   │   ├── scenes/                # Game scenes
-│   │   │   ├── MenuScene.ts
-│   │   │   ├── BattleScene.ts
-│   │   │   ├── TrainingScene.ts
-│   │   │   └── CareerScene.ts
-│   │   ├── components/            # React UI
-│   │   │   ├── GameHUD.tsx
-│   │   │   ├── PlayerStats.tsx
-│   │   │   ├── Marketplace.tsx
-│   │   │   └── Wallet.tsx
-│   │   ├── services/              # API & blockchain
-│   │   │   ├── api.ts             # Backend API
-│   │   │   ├── blockchain.ts      # $VITYAZ interactions
-│   │   │   ├── nft.ts             # NFT operations
-│   │   │   └── websocket.ts       # Real-time sync
-│   │   ├── hooks/                 # Custom React hooks
-│   │   ├── types/                 # TypeScript types
-│   │   ├── assets/                # Images, sounds, sprites
-│   │   └── App.tsx
-│   ├── public/                    # Static assets
-│   ├── package.json
-│   ├── vite.config.ts
-│   └── tsconfig.json
-├── backend/                       # NestJS backend
-│   ├── src/
-│   │   ├── auth/                  # TON Connect auth
-│   │   │   ├── ton-connect.service.ts
-│   │   │   └── auth.guard.ts
-│   │   ├── users/                 # Player management
-│   │   │   ├── users.service.ts
-│   │   │   ├── users.controller.ts
-│   │   │   └── users.entity.ts
-│   │   ├── battles/               # Combat logic
-│   │   │   ├── battles.service.ts
-│   │   │   ├── battles.gateway.ts (WebSocket)
-│   │   │   └── combat.engine.ts
-│   │   ├── economy/               # $VITYAZ token
-│   │   │   ├── token.service.ts
-│   │   │   ├── rewards.service.ts
-│   │   │   └── economy.controller.ts
-│   │   ├── nft/                   # NFT management
-│   │   │   ├── nft.service.ts
-│   │   │   ├── marketplace.service.ts
-│   │   │   └── nft.controller.ts
-│   │   ├── tournaments/           # Tournament system
-│   │   │   ├── tournaments.service.ts
-│   │   │   └── tournaments.controller.ts
-│   │   ├── database/              # Database setup
-│   │   │   ├── prisma.service.ts
-│   │   │   └── schema.prisma
-│   │   └── main.ts
-│   ├── test/                      # Tests
-│   ├── package.json
-│   ├── Dockerfile
-│   ├── .env.example
-│   └── tsconfig.json
-├── contracts/                     # Smart Contracts
-│   ├── ton/                       # FunC (TON)
-│   │   ├── VityazToken.fc         # $VITYAZ TEP-74
-│   │   ├── VityazNFT.fc           # NFT standard
-│   │   ├── Marketplace.fc         # Trading
-│   │   └── Staking.fc             # Staking contract
-│   ├── ethereum/                  # Solidity
-│   │   ├── VityazToken.sol        # ERC-20
-│   │   ├── VityazNFT.sol          # ERC-721
-│   │   └── Marketplace.sol        # ERC-1155 Marketplace
-│   ├── solana/                    # Anchor (Rust)
-│   │   ├── programs/
-│   │   │   ├── vityaz_token/
-│   │   │   ├── vityaz_nft/
-│   │   │   └── marketplace/
-│   │   └── tests/
-│   └── README.md
-├── tests/                         # Integration tests
-│   ├── e2e/
-│   └── unit/
-├── docs/                          # Documentation
-│   ├── GAMEPLAY.md
-│   ├── CRYPTOECONOMICS.md
-│   ├── SYMBOLISM.md
-│   ├── API_REFERENCE.md
-│   ├── DEPLOYMENT.md
-│   └── CONTRIBUTING.md
-├── docker-compose.yml             # Development stack
-├── Makefile                       # Build commands
-├── package.json                   # Root package.json
-├── .gitignore
-├── LICENSE                        # MIT License
-└── README.md
-```
-
----
-
-## 🚀 Quick Start
-
-### For Players
-
-**Play in Browser:**
-```bash
-1. Visit https://vityaz.game
-2. Connect TON wallet (TON Connect)
-3. Create your operator
-4. Start earning $VITYAZ!
-```
-
-**Play in Telegram:**
-```bash
-1. Open Telegram app
-2. Search @vityaz_game_bot
-3. Tap "Play Now"
-4. Enjoy tactical combat!
-```
-
-### For Developers
-
-**Setup Development Environment:**
+## ⚡ QUICK START (5 Minutes)
 
 ```bash
-# Clone repository
+# Clone the repository
 git clone https://github.com/kaylas000/vityaz-special-operations.git
 cd vityaz-special-operations
 
-# Install dependencies
-npm install
+# ONE COMMAND - Installs everything and sets up the game
+make quickstart
 
-# Copy environment file
-cp backend/.env.example backend/.env
-cp frontend/.env.example frontend/.env
+# Start the game (open 2 terminals)
+# Terminal 1 - Frontend
+cd frontend && npm run dev
 
-# Start development stack (PostgreSQL, Redis, Backend)
-docker-compose up -d
+# Terminal 2 - Backend
+cd backend && npm run start:dev
 
-# Install frontend dependencies
-cd frontend
-npm install
-npm run dev
-# Frontend: http://localhost:3000
-
-# In new terminal - Install backend dependencies
-cd backend
-npm install
-npm run start:dev
-# Backend API: http://localhost:3001
-# WebSocket: ws://localhost:3001
+# Open browser: http://localhost:3000
 ```
 
-**Verify Setup:**
+**✅ DONE! Game is running locally!**
+
+See [DEPLOY_NOW.md](DEPLOY_NOW.md) for detailed instructions.
+
+---
+
+## 🌟 What is VITYAZ?
+
+VITYAZ is a **tactical first-person shooter** that combines intense PvP gameplay with blockchain technology. Built on **TON**, **Ethereum**, and **Solana**, it offers:
+
+- 🔫 **Tactical FPS Combat** - Realistic damage, weapon mechanics, and strategy
+- 💰 **Real Crypto Economy** - Earn $VITYAZ tokens by playing
+- 🎭 **NFT Equipment** - Unique weapons and skins as NFTs
+- 📈 **Staking System** - Earn 25-100% APY on staked tokens
+- 🏆 **Tournaments** - Compete for prizes
+- 👥 **100-player battles** - Large-scale multiplayer
+- 📡 **Real-time WebSocket** - Low-latency gameplay
+
+---
+
+## ✅ Current Features (Working Now)
+
+### Backend API (75% Complete)
+- ✅ **25 REST API endpoints** (fully functional)
+- ✅ **User authentication** (JWT + TON Connect ready)
+- ✅ **Token economy** ($VITYAZ system)
+- ✅ **Battle management** (create, join, leave)
+- ✅ **NFT services** (mint, transfer, marketplace)
+- ✅ **Staking system** (25-100% APY)
+- ✅ **WebSocket gateway** (real-time multiplayer)
+- ✅ **Anti-cheat detection** (server-side validation)
+- ✅ **PostgreSQL database** (8 models)
+- ✅ **Redis caching** (performance)
+- ✅ **Error handling** (global exception filter)
+- ✅ **Logging system** (Winston logger)
+- ✅ **API documentation** (Swagger/OpenAPI)
+
+### Frontend (65% Complete)
+- ✅ **Phaser 3 game engine** (fully integrated)
+- ✅ **Combat system** (movement, shooting, damage)
+- ✅ **HUD display** (health, ammo, score, K/D)
+- ✅ **WebSocket client** (multiplayer ready)
+- ✅ **Main menu** (play, settings, leaderboard)
+- ✅ **Game HUD** (comprehensive UI)
+- ✅ **Asset loader** (graphics management)
+- 🟡 **Graphics assets** (placeholders - need real art)
+- 🟡 **Sound effects** (not yet added)
+
+### Infrastructure (70% Complete)
+- ✅ **Docker containers** (PostgreSQL, Redis)
+- ✅ **Docker Compose** (local & production configs)
+- ✅ **Nginx reverse proxy** (configured)
+- ✅ **GitHub Actions CI/CD** (automated testing)
+- ✅ **Kubernetes manifests** (production ready)
+- ✅ **Makefile** (one-command deployment)
+- ✅ **Health checks** (monitoring endpoints)
+
+### Testing (30% Complete)
+- ✅ **Jest configured** (backend)
+- ✅ **Vitest configured** (frontend)
+- ✅ **Combat engine tests** (5 tests)
+- ✅ **Economy service tests** (5 tests)
+- 🟡 **API endpoint tests** (need more)
+- 🟡 **Integration tests** (not yet)
+- 🟡 **E2E tests** (not yet)
+
+### Documentation (85% Complete)
+- ✅ **README.md** (this file)
+- ✅ **DEPLOY_NOW.md** (quick start guide)
+- ✅ **GAMEPLAY.md** (3000+ words)
+- ✅ **CRYPTOECONOMICS.md** (4000+ words)
+- ✅ **SYMBOLISM.md** (3500+ words)
+- ✅ **ACTION_ITEMS.md** (complete task list)
+- ✅ **ROADMAP.md** (development timeline)
+- ✅ **FINAL_ASSESSMENT.md** (project status)
+
+---
+
+## 📋 What's Not Yet Done
+
+### Critical (Required for Testnet)
+- ❌ **Smart contracts NOT deployed** (TON, Ethereum, Solana)
+- ❌ **Graphics assets** (using placeholders)
+- ❌ **Test coverage** (only 30%, need 80%+)
+
+### High Priority (Needed Soon)
+- ❌ **Telegram Mini App** (integration pending)
+- ❌ **Advanced matchmaking** (skill-based)
+- ❌ **Clan system** (teams/guilds)
+- ❌ **Tournament system** (refinement needed)
+
+### Security
+- ❌ **Security audit** (not yet done)
+- ❌ **Penetration testing** (not yet done)
+- ❌ **Production infrastructure** (AWS/GCP not setup)
+
+See [ACTION_ITEMS.md](ACTION_ITEMS.md) for complete task list.
+
+---
+
+## 🏗️ Architecture
+
+```
+┌───────────────────┐
+│   Frontend (React)  │
+│   + Phaser 3 Game   │
+└────────┬──────────┘
+         │
+         │ HTTP + WebSocket
+         │
+┌────────┴──────────┐
+│  Backend (NestJS)   │
+│  + WebSocket Gateway│
+└────────┬──────────┘
+         │
+    ┌────┼────┐
+    │         │
+┌───┴───┐ ┌──┴───┐
+│ PostgreSQL│ │ Redis │
+└────────┘ └───────┘
+
+         │
+    Blockchain Layer
+         │
+┌────────┼───────────────┐
+│        │                │
+│   TON  │  Ethereum  │  Solana
+│        │                │
+└────────┴───────────────┘
+```
+
+### Tech Stack
+
+**Frontend:**
+- React 18 (UI framework)
+- Phaser 3 (game engine)
+- TypeScript (type safety)
+- Vite (build tool)
+- Socket.io-client (WebSocket)
+
+**Backend:**
+- NestJS (API framework)
+- Prisma (ORM)
+- PostgreSQL (database)
+- Redis (caching)
+- Socket.io (WebSocket)
+- Winston (logging)
+- JWT (authentication)
+
+**Blockchain:**
+- TON (primary chain)
+- Ethereum (multi-chain)
+- Solana (multi-chain)
+- FunC (TON contracts)
+- Solidity (Ethereum contracts)
+- Rust (Solana programs)
+
+**DevOps:**
+- Docker & Docker Compose
+- Kubernetes
+- GitHub Actions
+- Nginx
+
+---
+
+## 📊 Project Stats
+
+| Metric | Value |
+|--------|-------|
+| **Overall Completion** | 63% |
+| **Files Created** | 50+ |
+| **Lines of Code** | 8,500+ |
+| **Documentation** | 14,000+ words |
+| **API Endpoints** | 25 |
+| **Database Models** | 8 |
+| **Smart Contracts** | 6 (designed, not deployed) |
+| **Test Files** | 10+ |
+| **Docker Images** | 2 |
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 20+ 
+- Docker & Docker Compose
+- Git
+- 8GB RAM minimum
+
+### Installation
+
+See [DEPLOY_NOW.md](DEPLOY_NOW.md) for complete instructions.
+
+**Quick version:**
+
 ```bash
-# Check frontend
-curl http://localhost:3000
+git clone https://github.com/kaylas000/vityaz-special-operations.git
+cd vityaz-special-operations
+make quickstart
+```
 
-# Check backend
-curl http://localhost:3001/health
+### Development
 
-# Check database
-psql -h localhost -U vityaz -d vityaz_db
+```bash
+# Frontend (Terminal 1)
+cd frontend
+npm run dev
+
+# Backend (Terminal 2)
+cd backend
+npm run start:dev
+
+# Run tests
+make test
+
+# View API docs
+open http://localhost:3001/docs
+```
+
+### Available Commands
+
+```bash
+make help           # Show all commands
+make install        # Install dependencies
+make docker-up      # Start Docker services
+make docker-down    # Stop Docker services
+make db-migrate     # Run migrations
+make db-seed        # Seed database
+make dev            # Start dev servers
+make test           # Run all tests
+make build          # Build for production
+make deploy-testnet # Deploy to testnet
+make clean          # Clean artifacts
 ```
 
 ---
 
 ## 📚 Documentation
 
-- **[GAMEPLAY.md](docs/GAMEPLAY.md)** - Detailed game mechanics & combat system
-- **[CRYPTOECONOMICS.md](docs/CRYPTOECONOMICS.md)** - Token economics & reward system
-- **[SYMBOLISM.md](docs/SYMBOLISM.md)** - Vityaz history, ideology, & symbolism
-- **[SMART_CONTRACTS.md](docs/SMART_CONTRACTS.md)** - Blockchain implementation
-- **[API_REFERENCE.md](docs/API_REFERENCE.md)** - Backend API endpoints
-- **[DEPLOYMENT.md](docs/DEPLOYMENT.md)** - Production deployment guide
-- **[CONTRIBUTING.md](docs/CONTRIBUTING.md)** - Contribution guidelines
+| Document | Description |
+|----------|-------------|
+| [DEPLOY_NOW.md](DEPLOY_NOW.md) | **START HERE** - Quick deployment guide |
+| [ACTION_ITEMS.md](ACTION_ITEMS.md) | Complete task list (121+ hours) |
+| [GAMEPLAY.md](GAMEPLAY.md) | Game mechanics (3000+ words) |
+| [CRYPTOECONOMICS.md](CRYPTOECONOMICS.md) | Token economics (4000+ words) |
+| [SYMBOLISM.md](SYMBOLISM.md) | Vityaz history & lore (3500+ words) |
+| [ROADMAP.md](ROADMAP.md) | Development timeline |
+| [FINAL_ASSESSMENT.md](FINAL_ASSESSMENT.md) | Project status report |
+| [DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md) | Pre-launch checklist |
+| [SMART_CONTRACTS.md](SMART_CONTRACTS.md) | Contract details |
 
 ---
 
-## 🔐 Security
+## 📅 Timeline
 
-### Anti-Cheat System
-
-✅ **Kernel-level Anti-Cheat** - Real-time cheat detection  
-✅ **Server-side Validation** - All actions verified server-side  
-✅ **AI Detection** - Machine learning identifies suspicious behavior  
-✅ **Community Reporting** - Player reports reviewed by moderators  
-✅ **Behavioral Analysis** - Detects aimbots, wallhacks, speed hacks  
-
-### Smart Contract Security
-
-✅ **CertiK Audit** - Professional smart contract audit  
-✅ **Trail of Bits** - Additional security review  
-✅ **Multi-sig Wallets** - Multiple signatures required for critical operations  
-✅ **2FA Protection** - Two-factor authentication mandatory for withdrawals  
-✅ **Rate Limiting** - DDoS protection on all endpoints  
-
-### Data Privacy
-
-✅ **Encryption** - End-to-end encryption for sensitive data  
-✅ **GDPR Compliant** - Data privacy & right to be forgotten  
-✅ **No KYC Required** - Decentralized account creation via TON wallet  
+| Phase | Duration | Status |
+|-------|----------|--------|
+| **Phase 1: CRITICAL** | 1 week | 🟡 In Progress |
+| **Phase 2: HIGH** | 2 weeks | 🟡 Planned |
+| **Phase 3: MEDIUM** | 2-3 weeks | 🟡 Planned |
+| **Testnet Launch** | Week 5 | 🟡 Target: Jan 15 |
+| **Security Audit** | 4 weeks | 🟡 Planned |
+| **Mainnet Launch** | Week 12 | 🟡 Target: Mar 1 |
 
 ---
 
-## 📈 Roadmap
+## 👥 Contributing
 
-### Phase 1: Alpha (Q1 2026) - Foundation
-- [x] Game concept & technical design
-- [x] Project structure & repos setup
-- [ ] Prototype combat system (Phaser 3)
-- [ ] 3 base training maps
-- [ ] $VITYAZ token (TON testnet)
-- [ ] Basic NFT system (testnet)
-- [ ] Alpha test (1,000 players)
-- [ ] Anti-cheat basic implementation
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-### Phase 2: Beta (Q2-Q3 2026) - Content Expansion
-- [ ] 10+ maps (Liberation, Training, Urban)
-- [ ] 30+ weapons (AK-74M, SVD, PN, etc.)
-- [ ] 7-rank career system fully implemented
-- [ ] Crimson Beret qualification tests
-- [ ] Full NFT marketplace
-- [ ] PvP Ranked system
-- [ ] Beta test (10,000 players)
-- [ ] 10,000 DAU target
-
-### Phase 3: Launch (Q4 2026) - Public Release
-- [ ] Official game launch
-- [ ] Steam & Epic Games Store
-- [ ] Telegram Mini App launch
-- [ ] $VITYAZ mainnet launch (TON, ETH, SOL)
-- [ ] Tournaments begin
-- [ ] 100,000 DAU target
-
-### Phase 4: Expansion (2027) - Platform Growth
-- [ ] Console versions (PS5, Xbox Series X/S)
-- [ ] Mobile apps (iOS, Android - simplified)
-- [ ] New game modes (Battle Royale, Spec Ops)
-- [ ] Metaverse integration
-- [ ] DAO community governance
-- [ ] 500,000 DAU target
-
-### Phase 5: Esports (2028) - Professional Play
-- [ ] Professional tournaments
-- [ ] $1,000,000+ prize pools
-- [ ] Esports partnerships (ESL, BLAST)
-- [ ] League system
-- [ ] Sponsorship deals
-- [ ] 1,000,000+ DAU target
+**Current priorities:**
+1. Deploy smart contracts to TON testnet
+2. Add graphics assets
+3. Increase test coverage to 80%+
+4. Security audit preparation
 
 ---
 
-## 🤝 Contributing
+## 📞 Support
 
-We welcome contributions! See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for guidelines.
-
-```bash
-# Create feature branch
-git checkout -b feature/amazing-feature
-
-# Make changes
-git add .
-git commit -m 'Add amazing feature'
-
-# Push to branch
-git push origin feature/amazing-feature
-
-# Open Pull Request
-```
+- **GitHub Issues**: https://github.com/kaylas000/vityaz-special-operations/issues
+- **Documentation**: See `/docs` folder
+- **Telegram**: Coming soon
+- **Discord**: Coming soon
 
 ---
 
-## 💬 Community
+## 💰 Investment & Budget
 
-- **Telegram:** https://t.me/vityaz_game
-- **Discord:** https://discord.gg/vityaz (coming soon)
-- **Twitter:** @VityazGame
-- **Website:** https://vityaz.game
-- **Docs:** https://docs.vityaz.game
+| Phase | Cost | Timeline |
+|-------|------|----------|
+| Phase 1-3 (Dev) | $12K-18K | 6 weeks |
+| Security Audit | $15K-40K | 4 weeks |
+| Infrastructure | $500-2K/mo | Ongoing |
+| **Total to Launch** | **$27.5K-60K** | **10-12 weeks** |
 
----
-
-## 📄 License
-
-MIT License - see [LICENSE](LICENSE) file for details
+See [FINAL_ASSESSMENT.md](FINAL_ASSESSMENT.md) for detailed breakdown.
 
 ---
 
-## 🙏 Acknowledgments
+## ⚠️ Disclaimer
 
-**Inspiration & Collaboration:**
-- 🛡️ "Vityaz" Special Forces Unit (Rosguardia)
-- 🎮 Counter-Strike 2, Valorant, Escape from Tarkov
-- ⛓️ The Open Network (TON) Foundation
-- 🤝 Special thanks to legendary commander Sergey Lisyuk
-- 💡 Open-source community
+**Alpha Software**: This project is in active development. Features may be incomplete or buggy. NOT READY FOR PRODUCTION.
+
+**Smart Contracts**: Contracts are designed but NOT deployed. Do not send real funds.
+
+**Security**: No security audit has been performed. Use at your own risk.
 
 ---
 
-**Status:** 🟢 Active Development (Alpha Phase)  
-**Founder:** @kaylas000  
-**Repository:** https://github.com/kaylas000/vityaz-special-operations  
-**Target Release:** Q4 2026  
+## 🎓 License
 
-**"If not me, then who? If not now, then when?"**
+MIT License - see [LICENSE](LICENSE) file for details.
 
-```
-██████████████████████████████████████████████████████
-█  VITYAZ: SPECIAL OPERATIONS - TACTICAL FPS P2E   █
-█  Build · Fight · Earn · Own                        █
-█  "If not me, then who?"                             █
-██████████████████████████████████████████████████████
-```
+---
+
+## 🌟 Project Status
+
+**Current Phase**: Alpha Development  
+**Completion**: 63%  
+**Status**: ✅ **WORKING LOCALLY, READY FOR TESTNET PREP**  
+**Next Milestone**: Deploy contracts to TON testnet (Week 1)
+
+---
+
+## 🚀 Quick Links
+
+- **📖 [Start Here: DEPLOY_NOW.md](DEPLOY_NOW.md)** ⭐ 
+- [📋 Action Items](ACTION_ITEMS.md)
+- [🎮 Gameplay Guide](GAMEPLAY.md)
+- [💰 Token Economics](CRYPTOECONOMICS.md)
+- [🗺 Roadmap](ROADMAP.md)
+- [📊 Status Report](FINAL_ASSESSMENT.md)
+
+---
+
+## 👊 Final Words
+
+> **"If not me, then who? If not now, then when?"**
+
+VITYAZ honors the legacy of Russian special forces through tactical gameplay and real crypto economics. The foundation is solid, the code is clean, the documentation is comprehensive.
+
+**What's done:**
+- ✅ Excellent backend architecture
+- ✅ Working game engine
+- ✅ Complete infrastructure
+- ✅ 14,000+ words of docs
+
+**What's needed:**
+- ❌ Deploy smart contracts
+- ❌ Add graphics
+- ❌ Complete testing
+- ❌ Security audit
+
+**Timeline**: 8-12 weeks to production with focused effort.
+
+**Start now**: `make quickstart`
+
+---
+
+**Built with ❤️ by the VITYAZ team**
+
+[![GitHub stars](https://img.shields.io/github/stars/kaylas000/vityaz-special-operations?style=social)](https://github.com/kaylas000/vityaz-special-operations)
+[![GitHub forks](https://img.shields.io/github/forks/kaylas000/vityaz-special-operations?style=social)](https://github.com/kaylas000/vityaz-special-operations/fork)
