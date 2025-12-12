@@ -1,93 +1,115 @@
 #!/bin/bash
 
 # VITYAZ Smart Contract Deployment Script
-# Deploys all 3 contracts to TON testnet
+# This script deploys all contracts to TON testnet
 
 set -e
 
-echo "🚀 VITYAZ: Smart Contract Deployment to TON Testnet"
-echo "====================================================\n"
-
-# Colors
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-RED='\033[0;31m'
-NC='\033[0m'
+echo "🚀 VITYAZ Contract Deployment to TON Testnet"
+echo "============================================="
+echo ""
 
 # Check if TON CLI is installed
-if ! command -v tonlib &> /dev/null; then
-    echo "${RED}❌ TON CLI not found. Installing...${NC}"
-    brew install ton-cli
+if ! command -v fift &> /dev/null; then
+    echo "❌ TON tools not installed. Installing..."
+    # Installation instructions
+    echo "Please install TON tools:"
+    echo "  macOS: brew install ton"
+    echo "  Linux: wget https://ton.org/download && chmod +x install.sh && ./install.sh"
+    exit 1
 fi
 
-echo "${YELLOW}Step 1: Setup TON Testnet Environment${NC}"
-echo "======================================="
+echo "✅ TON tools found"
 
-# Configure testnet
-tonlib config set testnet
-echo "${GREEN}✅ Configured testnet${NC}"
-
-# Get or create wallet
-if [ ! -f ~/.ton/wallet ]; then
-    echo "${YELLOW}Creating testnet wallet...${NC}"
-    tonlib wallet init testnet
-    echo "${GREEN}✅ Wallet created${NC}"
-    echo "${YELLOW}Request testnet TON from faucet:${NC}"
-    echo "https://testnet-giver.ton.org/"
-else
-    echo "${GREEN}✅ Wallet exists${NC}"
-fi
+# Navigate to contracts directory
+cd "$(dirname "$0")/../contracts/ton" || exit 1
 
 echo ""
-echo "${YELLOW}Step 2: Compile VityazToken.fc${NC}"
-echo "===================================="
-cd contracts/ton
+echo "📝 Step 1: Compiling VityazToken.fc"
 fift -s compile.fif VityazToken.fc
-echo "${GREEN}✅ Compiled VityazToken${NC}"
+if [ $? -eq 0 ]; then
+    echo "✅ VityazToken compiled successfully"
+else
+    echo "❌ VityazToken compilation failed"
+    exit 1
+fi
 
 echo ""
-echo "${YELLOW}Step 3: Deploy VityazToken to Testnet${NC}"
-echo "====================================="
-TOKEN_ADDRESS=$(tonlib deploy testnet VityazToken.boc)
-echo "${GREEN}✅ Deployed VityazToken${NC}"
-echo "Address: ${YELLOW}${TOKEN_ADDRESS}${NC}"
+echo "📝 Step 2: Deploying VityazToken to testnet"
+# Replace with actual deployment command
+echo "tonlib deploy testnet VityazToken.boc"
+echo "⚠️  Manual step: Run the command above and paste the contract address below"
+read -p "VityazToken address: " TOKEN_ADDRESS
 
 echo ""
-echo "${YELLOW}Step 4: Compile Marketplace.fc${NC}"
-echo "================================="
+echo "📝 Step 3: Compiling Marketplace.fc"
 fift -s compile.fif Marketplace.fc
-echo "${GREEN}✅ Compiled Marketplace${NC}"
+if [ $? -eq 0 ]; then
+    echo "✅ Marketplace compiled successfully"
+else
+    echo "❌ Marketplace compilation failed"
+    exit 1
+fi
 
 echo ""
-echo "${YELLOW}Step 5: Deploy Marketplace to Testnet${NC}"
-echo "==================================="
-MARKETPLACE_ADDRESS=$(tonlib deploy testnet Marketplace.boc)
-echo "${GREEN}✅ Deployed Marketplace${NC}"
-echo "Address: ${YELLOW}${MARKETPLACE_ADDRESS}${NC}"
+echo "📝 Step 4: Deploying Marketplace to testnet"
+echo "tonlib deploy testnet Marketplace.boc"
+echo "⚠️  Manual step: Run the command above and paste the contract address below"
+read -p "Marketplace address: " MARKETPLACE_ADDRESS
 
 echo ""
-echo "${YELLOW}Step 6: Compile Staking.func${NC}"
-echo "============================="
+echo "📝 Step 5: Compiling Staking.func"
 fift -s compile.fif Staking.func
-echo "${GREEN}✅ Compiled Staking${NC}"
+if [ $? -eq 0 ]; then
+    echo "✅ Staking compiled successfully"
+else
+    echo "❌ Staking compilation failed"
+    exit 1
+fi
 
 echo ""
-echo "${YELLOW}Step 7: Deploy Staking to Testnet${NC}"
-echo "================================="
-STAKING_ADDRESS=$(tonlib deploy testnet Staking.boc)
-echo "${GREEN}✅ Deployed Staking${NC}"
-echo "Address: ${YELLOW}${STAKING_ADDRESS}${NC}"
+echo "📝 Step 6: Deploying Staking to testnet"
+echo "tonlib deploy testnet Staking.boc"
+echo "⚠️  Manual step: Run the command above and paste the contract address below"
+read -p "Staking address: " STAKING_ADDRESS
 
 echo ""
-echo "${GREEN}====================================================="
-echo "✅ All contracts deployed successfully!"
-echo "=====================================================${NC}\n"
+echo "📝 Step 7: Updating .env file"
+cd ../../backend || exit 1
 
-echo "${YELLOW}Save these addresses in .env:${NC}"
-echo "TON_TOKEN_ADDRESS=${TOKEN_ADDRESS}"
-echo "TON_MARKETPLACE_ADDRESS=${MARKETPLACE_ADDRESS}"
-echo "TON_STAKING_ADDRESS=${STAKING_ADDRESS}"
+# Backup existing .env
+if [ -f .env ]; then
+    cp .env .env.backup.$(date +%s)
+fi
+
+# Update .env with contract addresses
+cat >> .env << EOF
+
+# TON Testnet Contract Addresses (Deployed $(date))
+TON_NETWORK=testnet
+TON_TOKEN_ADDRESS=$TOKEN_ADDRESS
+TON_MARKETPLACE_ADDRESS=$MARKETPLACE_ADDRESS
+TON_STAKING_ADDRESS=$STAKING_ADDRESS
+EOF
+
+echo "✅ .env updated with contract addresses"
+
 echo ""
-
-echo "${YELLOW}Test transfers:${NC}"
-echo "tonlib transfer ${TOKEN_ADDRESS} 100 <another-wallet>"
+echo "============================================="
+echo "🎉 Contract Deployment Complete!"
+echo "============================================="
+echo ""
+echo "Contract Addresses:"
+echo "  VityazToken:  $TOKEN_ADDRESS"
+echo "  Marketplace:  $MARKETPLACE_ADDRESS"
+echo "  Staking:      $STAKING_ADDRESS"
+echo ""
+echo "Next steps:"
+echo "  1. Verify contracts on TON explorer"
+echo "  2. Test token transfers"
+echo "  3. Run integration tests"
+echo "  4. Update frontend config"
+echo ""
+echo "View on TON Testnet Explorer:"
+echo "  https://testnet.tonscan.org/address/$TOKEN_ADDRESS"
+echo ""
