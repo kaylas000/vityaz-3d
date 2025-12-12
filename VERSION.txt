@@ -1,0 +1,4 @@
+0.1.0-alpha
+December 12, 2025
+Alpha Phase - MVP Complete
+Ready for Testnet Deployment
