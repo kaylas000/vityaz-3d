@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String          @id @default(cuid())
+  walletAddress     String          @unique
+  displayName       String
+  rank              String          @default("RECRUIT")
+  vityazBalance     Float           @default(0)
+  level             Int             @default(1)
+  kills             Int             @default(0)
+  deaths            Int             @default(0)
+  wins              Int             @default(0)
+  losses            Int             @default(0)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  battleStats       BattleStats?
+  battles           Battle[]
+  nfts              NFT[]
+  tournamentEntries TournamentEntry[]
+  inventoryItems    InventoryItem[]
+}
+
+model BattleStats {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id])
+  totalKills        Int      @default(0)
+  totalDeaths       Int      @default(0)
+  totalWins         Int      @default(0)
+  totalLosses       Int      @default(0)
+  headshotRatio     Float    @default(0)
+  avgDamagePerGame  Float    @default(0)
+  bestMultikill     Int      @default(0)
+}
+
+model Battle {
+  id        String   @id @default(cuid())
+  playerId  String
+  player    User     @relation(fields: [playerId], references: [id])
+  status    String   @default("ACTIVE")
+  score     Int      @default(0)
+  reward    Float    @default(0)
+  duration  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model NFT {
+  id        String   @id @default(cuid())
+  ownerId   String
+  owner     User     @relation(fields: [ownerId], references: [id])
+  type      String   // OPERATOR, WEAPON_SKIN, EQUIPMENT, BASE, BADGE
+  metadata  Json
+  tokenId   String?  @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model InventoryItem {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  itemType  String   // WEAPON, ARMOR, GRENADE, MEDICAL
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Tournament {
+  id        String   @id @default(cuid())
+  name      String
+  status    String   @default("UPCOMING")
+  prizePool Float
+  maxPlayers Int
+  entries   TournamentEntry[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TournamentEntry {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  tournamentId String
+  tournament   Tournament @relation(fields: [tournamentId], references: [id])
+  placement    Int?
+  prizeWon     Float    @default(0)
+  createdAt    DateTime @default(now())
+}
