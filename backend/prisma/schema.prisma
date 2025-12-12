@@ -1,3 +1,6 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,90 +11,171 @@ datasource db {
 }
 
 model User {
-  id                String          @id @default(cuid())
-  walletAddress     String          @unique
-  displayName       String
-  rank              String          @default("RECRUIT")
-  vityazBalance     Float           @default(0)
-  level             Int             @default(1)
-  kills             Int             @default(0)
-  deaths            Int             @default(0)
-  wins              Int             @default(0)
-  losses            Int             @default(0)
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-
-  battleStats       BattleStats?
+  id                String   @id @default(cuid())
+  username          String   @unique
+  tonAddress        String   @unique
+  email             String   @unique
+  avatar            String?
+  
+  // Economy
+  vityazBalance     BigInt   @default(0)
+  totalEarned       BigInt   @default(0)
+  
+  // Stats
+  level             Int      @default(1)
+  experience        Int      @default(0)
+  kills             Int      @default(0)
+  deaths            Int      @default(0)
+  wins              Int      @default(0)
+  losses            Int      @default(0)
+  
+  // Status
+  lastLogin         DateTime @default(now())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Relations
   battles           Battle[]
   nfts              NFT[]
-  tournamentEntries TournamentEntry[]
-  inventoryItems    InventoryItem[]
-}
-
-model BattleStats {
-  id                String   @id @default(cuid())
-  userId            String   @unique
-  user              User     @relation(fields: [userId], references: [id])
-  totalKills        Int      @default(0)
-  totalDeaths       Int      @default(0)
-  totalWins         Int      @default(0)
-  totalLosses       Int      @default(0)
-  headshotRatio     Float    @default(0)
-  avgDamagePerGame  Float    @default(0)
-  bestMultikill     Int      @default(0)
+  stakes            Stake[]
+  marketplaceListings MarketplaceListing[]
+  tournaments       TournamentParticipant[]
+  
+  @@index([tonAddress])
+  @@map("users")
 }
 
 model Battle {
-  id        String   @id @default(cuid())
-  playerId  String
-  player    User     @relation(fields: [playerId], references: [id])
-  status    String   @default("ACTIVE")
-  score     Int      @default(0)
-  reward    Float    @default(0)
-  duration  Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                String   @id @default(cuid())
+  playerId          String
+  player            User     @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  
+  difficulty        String   // EASY, MEDIUM, HARD
+  score             Int
+  kills             Int
+  deaths            Int
+  duration          Int      // seconds
+  
+  // Rewards
+  tokensEarned      Int
+  experienceGained  Int
+  
+  createdAt         DateTime @default(now())
+  
+  @@index([playerId])
+  @@index([createdAt])
+  @@map("battles")
 }
 
 model NFT {
-  id        String   @id @default(cuid())
-  ownerId   String
-  owner     User     @relation(fields: [ownerId], references: [id])
-  type      String   // OPERATOR, WEAPON_SKIN, EQUIPMENT, BASE, BADGE
-  metadata  Json
-  tokenId   String?  @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                String   @id @default(cuid())
+  tokenId           String   @unique
+  ownerId           String
+  owner             User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  type              String   // OPERATOR, WEAPON, EQUIPMENT, BASE, BADGE
+  name              String
+  rarity            String   // COMMON, RARE, EPIC, LEGENDARY
+  metadata          Json     // Custom stats
+  
+  listed            Boolean  @default(false)
+  listedPrice       Int?
+  listing           MarketplaceListing?
+  
+  dailyReward       Int?     // For BASE NFTs
+  lastRewardClaimed DateTime?
+  
+  mintedAt          DateTime @default(now())
+  
+  @@index([ownerId])
+  @@index([type])
+  @@map("nfts")
 }
 
-model InventoryItem {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  itemType  String   // WEAPON, ARMOR, GRENADE, MEDICAL
-  quantity  Int      @default(1)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model MarketplaceListing {
+  id                String   @id @default(cuid())
+  nftId             String   @unique
+  nft               NFT      @relation(fields: [nftId], references: [id], onDelete: Cascade)
+  
+  sellerId          String
+  seller            User     @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  
+  price             Int
+  createdAt         DateTime @default(now())
+  
+  @@index([sellerId])
+  @@index([price])
+  @@map("marketplace_listings")
+}
+
+model Stake {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  amount            BigInt
+  apy               Int      // Annual percentage yield
+  lockPeriodDays    Int
+  
+  startedAt         DateTime @default(now())
+  unlocksAt         DateTime
+  claimedAt         DateTime?
+  
+  rewards           BigInt   @default(0)
+  
+  @@index([userId])
+  @@index([unlocksAt])
+  @@map("stakes")
 }
 
 model Tournament {
-  id        String   @id @default(cuid())
-  name      String
-  status    String   @default("UPCOMING")
-  prizePool Float
-  maxPlayers Int
-  entries   TournamentEntry[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                String   @id @default(cuid())
+  name              String
+  description       String?
+  
+  startDate         DateTime
+  endDate           DateTime
+  
+  prizePool         BigInt   // In $VITYAZ
+  maxParticipants   Int
+  
+  participants      TournamentParticipant[]
+  
+  createdAt         DateTime @default(now())
+  
+  @@index([startDate])
+  @@map("tournaments")
 }
 
-model TournamentEntry {
-  id           String   @id @default(cuid())
-  userId       String
-  user         User     @relation(fields: [userId], references: [id])
-  tournamentId String
-  tournament   Tournament @relation(fields: [tournamentId], references: [id])
-  placement    Int?
-  prizeWon     Float    @default(0)
-  createdAt    DateTime @default(now())
+model TournamentParticipant {
+  id                String   @id @default(cuid())
+  tournamentId      String
+  tournament        Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  score             Int      @default(0)
+  rank              Int?
+  prizeWon          BigInt   @default(0)
+  
+  joinedAt          DateTime @default(now())
+  
+  @@unique([tournamentId, userId])
+  @@index([tournamentId])
+  @@map("tournament_participants")
+}
+
+model AnticheatReport {
+  id                String   @id @default(cuid())
+  playerId          String
+  suspiciousActions String[] // Array of suspicious behaviors
+  score             Float    // 0-100 suspicious score
+  reviewed          Boolean  @default(false)
+  banned            Boolean  @default(false)
+  
+  createdAt         DateTime @default(now())
+  
+  @@index([playerId])
+  @@map("anticheat_reports")
 }

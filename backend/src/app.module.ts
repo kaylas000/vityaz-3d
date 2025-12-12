@@ -1,25 +1,23 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
-import { DatabaseModule } from './database/database.module'
+import { PrismaService } from './database/prisma.service'
 import { AuthModule } from './auth/auth.module'
 import { UsersModule } from './users/users.module'
-import { BattlesModule } from './battles/battles.module'
 import { EconomyModule } from './economy/economy.module'
-import { NftModule } from './nft/nft.module'
+import { BattlesModule } from './battles/battles.module'
+import { NFTModule } from './nft/nft.module'
 import { TournamentsModule } from './tournaments/tournaments.module'
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
-    DatabaseModule,
+    ConfigModule.forRoot(),
     AuthModule,
     UsersModule,
-    BattlesModule,
     EconomyModule,
-    NftModule,
+    BattlesModule,
+    NFTModule,
     TournamentsModule,
   ],
+  providers: [PrismaService],
 })
 export class AppModule {}
