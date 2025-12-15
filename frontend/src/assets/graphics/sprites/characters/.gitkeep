@@ -1,0 +1,9 @@
+# Character Sprites
+
+Contains player and enemy character sprites:
+- player_idle.png (64x64)
+- player_walk_down.png (64x64)
+- player_walk_up.png (64x64)
+- enemy_basic.png (56x56)
+- enemy_armed.png (56x56)
+- enemy_heavy.png (64x64)
