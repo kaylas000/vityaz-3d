@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import Phaser from 'phaser'
 import MainMenuScene from './scenes/MainMenuScene'
 import SettingsScene from './scenes/SettingsScene'
+import StatsScene from './scenes/StatsScene'
 import MenuScene from './scenes/MenuScene'
 import BattleScene from './scenes/BattleScene'
 import TrainingScene from './scenes/TrainingScene'
@@ -28,7 +29,7 @@ export default function App() {
           debug: false,
         },
       },
-      scene: [MainMenuScene, SettingsScene, MenuScene, BattleScene, TrainingScene, CompleteGameScene],
+      scene: [MainMenuScene, SettingsScene, StatsScene, MenuScene, BattleScene, TrainingScene, CompleteGameScene],
       render: {
         pixelArt: false,
         antialias: true,
