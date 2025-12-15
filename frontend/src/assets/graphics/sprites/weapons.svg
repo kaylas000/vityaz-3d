@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 64" width="256" height="64">
+  <defs>
+    <style>
+      .barrel { fill: #505050; }
+      .stock { fill: #8b6f47; }
+      .trigger { fill: #333; }
+      .sight { fill: #666; }
+    </style>
+  </defs>
+
+  <!-- AK-74M (0-64) -->
+  <g id="ak74m">
+    <!-- Barrel -->
+    <rect x="4" y="14" width="40" height="4" class="barrel" />
+    <!-- Gas tube -->
+    <rect x="4" y="10" width="38" height="3" class="barrel" />
+    <!-- Stock -->
+    <rect x="44" y="12" width="14" height="8" class="stock" />
+    <!-- Receiver -->
+    <rect x="4" y="18" width="46" height="6" fill="#444" />
+    <!-- Magazine -->
+    <polygon points="10,24 10,32 6,32 6,24" class="barrel" />
+    <!-- Charge handle -->
+    <rect x="42" y="10" width="3" height="4" class="trigger" />
+    <!-- Sight -->
+    <rect x="20" y="8" width="2" height="2" class="sight" />
+  </g>
+
+  <!-- SVD Sniper Rifle (64-128) -->
+  <g id="svd">
+    <!-- Long barrel -->
+    <rect x="68" y="16" width="50" height="3" class="barrel" />
+    <!-- Scope mount -->
+    <rect x="68" y="10" width="50" height="3" class="sight" />
+    <!-- Scope -->
+    <circle cx="90" cy="11" r="3" class="sight" />
+    <!-- Stock -->
+    <polygon points="118,14 118,26 135,20" class="stock" />
+    <!-- Magazine -->
+    <polygon points="75,25 75,33 71,33 71,25" class="barrel" />
+  </g>
+
+  <!-- RPK-74 Light Machine Gun (128-192) -->
+  <g id="rpk74">
+    <!-- Longer barrel for accuracy -->
+    <rect x="132" y="13" width="48" height="5" class="barrel" />
+    <!-- Gas tube -->
+    <rect x="132" y="9" width="45" height="2" class="barrel" />
+    <!-- Stock -->
+    <rect x="180" y="12" width="12" height="10" class="stock" />
+    <!-- Large magazine -->
+    <polygon points="140,26 140,36 134,36 134,26" fill="#555" />
+    <!-- Bipod indication -->
+    <line x1="138" y1="28" x2="134" y2="32" stroke="#444" stroke-width="1" />
+    <line x1="145" y1="28" x2="142" y2="32" stroke="#444" stroke-width="1" />
+  </g>
+
+  <!-- Makarov PMM Pistol (192-256) -->
+  <g id="pmm">
+    <!-- Slide -->
+    <rect x="196" y="16" width="28" height="6" fill="#505050" />
+    <!-- Barrel -->
+    <rect x="196" y="18" width="12" height="3" class="barrel" />
+    <!-- Grip -->
+    <rect x="198" y="22" width="5" height="14" class="stock" />
+    <!-- Trigger guard -->
+    <path d="M 206 22 Q 206 28 210 28" stroke="#333" stroke-width="1" fill="none" />
+    <!-- Sight -->
+    <rect x="210" y="14" width="2" height="2" class="sight" />
+  </g>
+</svg>
