@@ -137,8 +137,10 @@ export default class MainMenuScene extends Phaser.Scene {
       buttonHeight,
       '⚙️ НАСТРОЙКИ',
       () => {
-        console.log('Settings scene - coming soon')
-        // Later: this.scene.start('SettingsScene')
+        this.cameras.main.fade(300, 0, 0, 0)
+        this.time.delayedCall(300, () => {
+          this.scene.start('SettingsScene')
+        })
       },
       'settings'
     )
