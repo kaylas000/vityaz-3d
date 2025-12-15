@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import { getGameStateManager } from '../services/GameStateManager'
 
 /**
  * Main Menu Scene - Professional military-themed main menu
@@ -111,7 +112,7 @@ export default class MainMenuScene extends Phaser.Scene {
     const buttonSpacing = 100
     const startY = centerY + 80
 
-    // ИГРАТЬ Button
+    // ИГРАТЬ Button (UPDATED - goes to LevelSelectScene)
     const playButton = this.createMilitaryButton(
       centerX,
       startY,
@@ -123,7 +124,7 @@ export default class MainMenuScene extends Phaser.Scene {
         this.cameras.main.flash(200, 45, 45, 45)
         this.cameras.main.fade(400, 0, 0, 0)
         this.time.delayedCall(400, () => {
-          this.scene.start('CompleteGame')
+          this.scene.start('LevelSelectScene')
         })
       },
       'play'
