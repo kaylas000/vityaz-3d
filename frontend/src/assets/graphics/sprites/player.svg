@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 128" width="64" height="128">
+  <!-- Background transparency -->
+  <defs>
+    <style>
+      .soldier-body { fill: #2a5f3f; }
+      .soldier-skin { fill: #d4a574; }
+      .soldier-beret { fill: #8b4513; }
+      .soldier-gear { fill: #3d3d3d; }
+      .soldier-rifle { fill: #505050; }
+      .outline { stroke: #000; stroke-width: 0.5; fill: none; }
+    </style>
+  </defs>
+
+  <!-- Head -->
+  <circle cx="32" cy="20" r="12" class="soldier-skin" />
+
+  <!-- Cropped Beret (left side - Vityaz symbol) -->
+  <ellipse cx="28" cy="16" rx="14" ry="8" class="soldier-beret" />
+  <path d="M 20 18 Q 18 16 20 14" class="outline" />
+
+  <!-- Eyes -->
+  <circle cx="28" cy="18" r="1.5" fill="#000" />
+  <circle cx="36" cy="18" r="1.5" fill="#000" />
+
+  <!-- Mouth -->
+  <path d="M 30 22 Q 32 23 34 22" class="outline" stroke="#000" stroke-width="0.5" />
+
+  <!-- Tactical Jacket -->
+  <rect x="18" y="32" width="28" height="24" class="soldier-body" rx="2" />
+
+  <!-- Gear/Chest Rig -->
+  <rect x="20" y="34" width="24" height="20" class="soldier-gear" rx="1" />
+  <rect x="22" y="36" width="5" height="5" fill="#555" />
+  <rect x="30" y="36" width="5" height="5" fill="#555" />
+  <rect x="38" y="36" width="5" height="5" fill="#555" />
+  <rect x="22" y="44" width="5" height="5" fill="#555" />
+  <rect x="30" y="44" width="5" height="5" fill="#555" />
+  <rect x="38" y="44" width="5" height="5" fill="#555" />
+
+  <!-- Arms - Right (holding rifle) -->
+  <rect x="46" y="36" width="6" height="20" class="soldier-skin" rx="2" />
+  <rect x="52" y="32" width="8" height="26" class="soldier-rifle" />
+  
+  <!-- Arms - Left -->
+  <rect x="12" y="38" width="6" height="18" class="soldier-skin" rx="2" />
+
+  <!-- Pants -->
+  <rect x="20" y="56" width="24" height="24" class="soldier-body" rx="2" />
+
+  <!-- Boots -->
+  <rect x="20" y="80" width="10" height="16" fill="#1a1a1a" />
+  <rect x="34" y="80" width="10" height="16" fill="#1a1a1a" />
+
+  <!-- Outline -->
+  <circle cx="32" cy="20" r="12" class="outline" />
+  <rect x="18" y="32" width="28" height="24" class="outline" rx="2" />
+  <rect x="20" y="56" width="24" height="24" class="outline" rx="2" />
+</svg>
