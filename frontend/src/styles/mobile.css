@@ -1,0 +1,382 @@
+/* ============================================
+   MOBILE UI STYLES - VITYAZ
+   Touch-optimized controls and interactions
+   ============================================ */
+
+.touch-joystick {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(66, 153, 225, 0.1), rgba(66, 153, 225, 0.05));
+  border: 2px solid rgba(66, 153, 225, 0.3);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: none;
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.touch-joystick.active {
+  background: radial-gradient(circle, rgba(66, 153, 225, 0.2), rgba(66, 153, 225, 0.1));
+  border-color: rgba(66, 153, 225, 0.6);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 20px rgba(66, 153, 225, 0.3);
+}
+
+.joystick-background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle, transparent 70%, rgba(66, 153, 225, 0.1) 100%);
+}
+
+.joystick-knob {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4), rgba(66, 153, 225, 0.8));
+  border: 2px solid rgba(66, 153, 225, 0.6);
+  box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4), inset -1px -1px 3px rgba(0, 0, 0, 0.3);
+  transform: translate(-50%, -50%);
+  transition: transform 100ms cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+}
+
+.joystick-direction {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  opacity: 0.8;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.direction-text {
+  display: inline-block;
+  animation: pulse 500ms ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+/* ============================================
+   MOBILE BUTTON CONTROLS
+   ============================================ */
+
+.mobile-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.mobile-button {
+  min-height: 48px;
+  min-width: 48px;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(66, 153, 225, 0.8), rgba(66, 153, 225, 0.6));
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.mobile-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 500ms, height 500ms;
+}
+
+.mobile-button:active::before {
+  width: 200%;
+  height: 200%;
+}
+
+.mobile-button:hover {
+  background: linear-gradient(135deg, rgba(66, 153, 225, 1), rgba(66, 153, 225, 0.8));
+  box-shadow: 0 6px 16px rgba(66, 153, 225, 0.4);
+  transform: translateY(-2px);
+}
+
+.mobile-button:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 8px rgba(66, 153, 225, 0.3);
+}
+
+.mobile-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Large action buttons */
+.mobile-button.large {
+  grid-column: span 2;
+  min-height: 56px;
+  font-size: 16px;
+}
+
+/* Variant buttons */
+.mobile-button.secondary {
+  background: linear-gradient(135deg, rgba(100, 100, 100, 0.8), rgba(80, 80, 80, 0.6));
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.mobile-button.danger {
+  background: linear-gradient(135deg, rgba(220, 53, 69, 0.8), rgba(200, 40, 60, 0.6));
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+/* ============================================
+   MOBILE HUD (HEADS-UP DISPLAY)
+   ============================================ */
+
+.mobile-hud {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 12px;
+  padding-top: max(12px, env(safe-area-inset-top));
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+}
+
+.hud-top {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  pointer-events: auto;
+}
+
+.hud-bottom {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  justify-content: space-between;
+  pointer-events: auto;
+}
+
+.hud-panel {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #4299e1;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid rgba(66, 153, 225, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.hud-health {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.health-bar {
+  width: 100px;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid rgba(66, 153, 225, 0.3);
+}
+
+.health-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4299e1, #42a5f5);
+  border-radius: 3px;
+  transition: width 300ms ease-out;
+  box-shadow: 0 0 8px rgba(66, 153, 225, 0.6);
+}
+
+.hud-ammo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ammo-counter {
+  font-variant-numeric: tabular-nums;
+  min-width: 30px;
+  text-align: right;
+}
+
+.hud-score {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* ============================================
+   MOBILE D-PAD (Alternative to Joystick)
+   ============================================ */
+
+.dpad {
+  display: grid;
+  grid-template-columns: repeat(3, 44px);
+  grid-template-rows: repeat(3, 44px);
+  gap: 4px;
+  width: fit-content;
+}
+
+.dpad-button {
+  min-height: 44px;
+  min-width: 44px;
+  border: none;
+  border-radius: 6px;
+  background: rgba(66, 153, 225, 0.6);
+  color: white;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 100ms ease-out;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dpad-button:active {
+  background: rgba(66, 153, 225, 0.9);
+  transform: scale(0.95);
+}
+
+.dpad-button.center {
+  grid-column: 2;
+  grid-row: 2;
+  cursor: default;
+  background: transparent;
+  pointer-events: none;
+}
+
+/* ============================================
+   MOBILE SAFE AREA HANDLING
+   ============================================ */
+
+.safe-area {
+  padding-top: max(12px, env(safe-area-inset-top));
+  padding-right: max(12px, env(safe-area-inset-right));
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  padding-left: max(12px, env(safe-area-inset-left));
+}
+
+/* ============================================
+   MOBILE VIEWPORT OPTIMIZATION
+   ============================================ */
+
+.viewport-optimized {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh; /* Dynamic viewport height for mobile */
+  overflow: hidden;
+}
+
+.viewport-optimized canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* ============================================
+   TOUCH FEEDBACK
+   ============================================ */
+
+.touch-feedback {
+  position: fixed;
+  pointer-events: none;
+  width: 40px;
+  height: 40px;
+  border: 2px solid rgba(66, 153, 225, 0.6);
+  border-radius: 50%;
+  animation: touch-ripple 600ms ease-out forwards;
+}
+
+@keyframes touch-ripple {
+  0% {
+    width: 40px;
+    height: 40px;
+    opacity: 1;
+  }
+  100% {
+    width: 100px;
+    height: 100px;
+    opacity: 0;
+  }
+}
+
+/* ============================================
+   PERFORMANCE OPTIMIZATIONS
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .touch-joystick,
+  .mobile-button,
+  .dpad-button,
+  .joystick-knob,
+  .health-bar-fill,
+  .touch-feedback {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* GPU acceleration */
+.mobile-hud,
+.mobile-buttons,
+.joystick-knob,
+.touch-feedback {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Contain paint for performance */
+.hud-panel,
+.mobile-button,
+.dpad-button {
+  contain: layout style paint;
+}
