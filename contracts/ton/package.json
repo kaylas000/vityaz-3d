@@ -1,0 +1,43 @@
+{
+  "name": "vityaz-ton-contracts",
+  "version": "1.0.0",
+  "description": "VITYAZ Smart Contracts for TON Blockchain",
+  "main": "index.js",
+  "scripts": {
+    "build": "npx tsc",
+    "deploy": "ts-node deploy/deploy-token.ts",
+    "deploy:marketplace": "ts-node deploy/deploy-marketplace.ts",
+    "deploy:staking": "ts-node deploy/deploy-staking.ts",
+    "test": "jest",
+    "test:balance": "ts-node tests/test-balance.ts",
+    "test:mint": "ts-node tests/test-mint.ts",
+    "test:transfer": "ts-node tests/test-transfer.ts",
+    "clean": "rm -rf build dist",
+    "lint": "eslint src --ext .ts"
+  },
+  "keywords": [
+    "ton",
+    "blockchain",
+    "smart-contracts",
+    "vityaz",
+    "gaming"
+  ],
+  "author": "VITYAZ Team",
+  "license": "MIT",
+  "dependencies": {
+    "@ton/ton": "^13.5.0",
+    "@ton/core": "^0.49.0",
+    "@ton/crypto": "^3.14.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "eslint": "^8.54.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.2"
+  }
+}
