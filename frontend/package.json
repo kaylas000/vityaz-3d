@@ -10,13 +10,18 @@
     "test:ui": "vitest --ui"
   },
   "dependencies": {
-    "phaser": "^3.55.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "babylon.js": "^7.14.0",
+    "@babylonjs/core": "^7.14.0",
+    "@babylonjs/loaders": "^7.14.0",
+    "@babylonjs/gui": "^7.14.0",
+    "@babylonjs/inspector": "^7.14.0",
     "axios": "^1.6.0",
     "zustand": "^4.4.0"
   },
   "devDependencies": {
+    "@types/babylon.js": "^7.14.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "@vitejs/plugin-react": "^4.2.0",
