@@ -165,23 +165,23 @@ export default class CompleteGameScene extends Phaser.Scene {
   preload() {
     // ===== ЗАГРУЗКА СПРАЙТОВ =====
     // Персонажи
-    this.load.image('player', '/assets/sprites/player.png');
-    this.load.image('enemy_basic', '/assets/sprites/enemy_basic.png');
-    this.load.image('enemy_tank', '/assets/sprites/enemy_tank.png');
+    this.load.image('player', './assets/sprites/player.png');
+    this.load.image('enemy_basic', './assets/sprites/enemy_basic.png');
+    this.load.image('enemy_tank', './assets/sprites/enemy_tank.png');
 
     // Оружие
-    this.load.image('weapon_ak74', '/assets/sprites/weapon_ak74.png');
-    this.load.image('weapon_pmm', '/assets/sprites/weapon_pmm.png');
-    this.load.image('weapon_rpk', '/assets/sprites/weapon_rpk.png');
-    this.load.image('weapon_svd', '/assets/sprites/weapon_svd.png');
+    this.load.image('weapon_ak74', './assets/sprites/weapon_ak74.png');
+    this.load.image('weapon_pmm', './assets/sprites/weapon_pmm.png');
+    this.load.image('weapon_rpk', './assets/sprites/weapon_rpk.png');
+    this.load.image('weapon_svd', './assets/sprites/weapon_svd.png');
 
     // Load audio
     try {
-      this.load.audio('gunshot', '/assets/sounds/gunshot.mp3');
-      this.load.audio('reload', '/assets/sounds/reload.mp3');
-      this.load.audio('enemyDeath', '/assets/sounds/enemy-death.mp3');
-      this.load.audio('playerHit', '/assets/sounds/player-hit.mp3');
-      this.load.audio('bgm', '/assets/sounds/bgm-intense.mp3');
+      this.load.audio('gunshot', './assets/sounds/gunshot.mp3');
+      this.load.audio('reload', './assets/sounds/reload.mp3');
+      this.load.audio('enemyDeath', './assets/sounds/enemy-death.mp3');
+      this.load.audio('playerHit', './assets/sounds/player-hit.mp3');
+      this.load.audio('bgm', './assets/sounds/bgm-intense.mp3');
     } catch (e) {
       console.log('Audio files not found (optional)');
     }
@@ -753,3 +753,4 @@ export default class CompleteGameScene extends Phaser.Scene {
     });
   }
 }
+
