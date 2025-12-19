@@ -1,22 +1,21 @@
-import { useEffect, useRef } from 'react'
+﻿import { useEffect, useRef } from 'react'
 import Phaser from 'phaser'
-import MainMenuScene from './scenes/MainMenuScene'
-import LevelSelectScene from './scenes/LevelSelectScene'
-import SettingsScene from './scenes/SettingsScene'
-import StatsScene from './scenes/StatsScene'
-import MenuScene from './scenes/MenuScene'
 import BattleScene from './scenes/BattleScene'
-import TrainingScene from './scenes/TrainingScene'
+import MainMenuScene from './scenes/MainMenuScene'
 import CompleteGameScene from './scenes/CompleteGameScene'
-import GameHUD from './components/GameHUD'
 import './App.css'
+
+declare global {
+  interface Window {
+    game?: Phaser.Game
+  }
+}
 
 export default function App() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const gameRef = useRef<Phaser.Game | null>(null)
 
   useEffect(() => {
-    if (!containerRef.current || gameRef.current) return
+    if (!containerRef.current) return
 
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
@@ -25,47 +24,17 @@ export default function App() {
       height: window.innerHeight,
       physics: {
         default: 'arcade',
-        arcade: {
-          gravity: { y: 300 },
-          debug: false,
-        },
+        arcade: { gravity: { y: 300 } },
       },
-      scene: [
-        MainMenuScene,
-        LevelSelectScene,
-        SettingsScene,
-        StatsScene,
-        MenuScene,
-        BattleScene,
-        TrainingScene,
-        CompleteGameScene,
-      ],
-      render: {
-        pixelArt: false,
-        antialias: true,
-      },
+      scene: [BattleScene, MainMenuScene, CompleteGameScene],
     }
 
-    gameRef.current = new Phaser.Game(config)
+    const game = new Phaser.Game(config)
+    window.game = game
+    game.scene.start('BattleScene')
 
-    const handleResize = () => {
-      if (gameRef.current) {
-        gameRef.current.scale.resize(window.innerWidth, window.innerHeight)
-      }
-    }
-
-    window.addEventListener('resize', handleResize)
-
-    return () => {
-      window.removeEventListener('resize', handleResize)
-      gameRef.current?.destroy(true)
-    }
+    return () => { game.destroy(true) }
   }, [])
 
-  return (
-    <div className="vityaz-container">
-      <div ref={containerRef} className="game-container" />
-      <GameHUD />
-    </div>
-  )
+  return <div className="vityaz-container"><div ref={containerRef} className="game-container" /></div>
 }
