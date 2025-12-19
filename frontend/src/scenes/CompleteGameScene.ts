@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+﻿import Phaser from 'phaser';
 
 // Level configuration interface
 interface LevelConfig {
@@ -163,6 +163,18 @@ export default class CompleteGameScene extends Phaser.Scene {
   }
 
   preload() {
+    // ===== ЗАГРУЗКА СПРАЙТОВ =====
+    // Персонажи
+    this.load.image('player', '/assets/sprites/player.png');
+    this.load.image('enemy_basic', '/assets/sprites/enemy_basic.png');
+    this.load.image('enemy_tank', '/assets/sprites/enemy_tank.png');
+
+    // Оружие
+    this.load.image('weapon_ak74', '/assets/sprites/weapon_ak74.png');
+    this.load.image('weapon_pmm', '/assets/sprites/weapon_pmm.png');
+    this.load.image('weapon_rpk', '/assets/sprites/weapon_rpk.png');
+    this.load.image('weapon_svd', '/assets/sprites/weapon_svd.png');
+
     // Load audio
     try {
       this.load.audio('gunshot', '/assets/sounds/gunshot.mp3');
@@ -205,23 +217,19 @@ export default class CompleteGameScene extends Phaser.Scene {
   }
 
   private createPlayer() {
-    // Create player sprite
-    const graphics = this.make.graphics({ x: 0, y: 0, add: false });
-    graphics.fillStyle(0x00aa00, 1);
-    graphics.fillRectShape(new Phaser.Geom.Rectangle(0, 0, 32, 32));
-    graphics.fillStyle(0xffaa00, 1);
-    graphics.fillCircle(16, 8, 4);
-    graphics.generateTexture('playerTexture', 32, 32);
-    graphics.destroy();
-
+    // ===== ИСПОЛЬЗУЕМ РЕАЛЬНЫЙ СПРАЙТ =====
     this.player = this.physics.add.sprite(
       this.playerData.x,
       this.playerData.y,
-      'playerTexture'
+      'player'
     );
     this.player.setBounce(0);
     this.player.setCollideWorldBounds(true);
     this.player.setMaxVelocity(300, 300);
+    
+    // Масштабируем спрайт (1024x1024 -> ~50x50)
+    this.player.setScale(0.05);
+    this.player.setDisplaySize(50, 50);
   }
 
   private createEnemyGroup() {
@@ -268,7 +276,6 @@ export default class CompleteGameScene extends Phaser.Scene {
     });
     this.weaponText.setScrollFactor(0);
 
-    // NEW: Difficulty indicator
     const difficultyColor = this.getDifficultyColor();
     this.difficultyText = this.add.text(
       10,
@@ -331,23 +338,13 @@ export default class CompleteGameScene extends Phaser.Scene {
   update(time: number, delta: number) {
     if (this.gameOver || this.paused) return;
 
-    // Update player
     this.updatePlayer();
     this.updatePlayerRotation();
-
-    // Update enemies
     this.updateEnemies(time);
-
-    // Update collisions
     this.updateCollisions();
-
-    // Update UI
     this.updateUI();
-
-    // Wave management
     this.updateWaveManagement();
 
-    // Reload management
     if (this.reloading) {
       this.reloadTimer -= delta;
       if (this.reloadTimer <= 0) {
@@ -357,12 +354,10 @@ export default class CompleteGameScene extends Phaser.Scene {
   }
 
   private updatePlayer() {
-    // Reset acceleration
     if (this.player) {
       this.player.setAcceleration(0, 0);
     }
 
-    // Movement
     const speed = 300;
     if (this.keys.W?.isDown) {
       if (this.player) this.player.setAccelerationY(-speed);
@@ -377,18 +372,15 @@ export default class CompleteGameScene extends Phaser.Scene {
       if (this.player) this.player.setAccelerationX(speed);
     }
 
-    // Reload
     if (this.keys.R?.isDown && !this.reloading) {
       this.startReload();
     }
 
-    // Weapon switching
     if (this.keys.ONE?.isDown) this.switchWeapon(0);
     if (this.keys.TWO?.isDown) this.switchWeapon(1);
     if (this.keys.THREE?.isDown) this.switchWeapon(2);
     if (this.keys.FOUR?.isDown) this.switchWeapon(3);
 
-    // Pause
     if (this.keys.P?.isDown) {
       this.paused = true;
       this.showPauseMenu();
@@ -413,7 +405,6 @@ export default class CompleteGameScene extends Phaser.Scene {
     this.enemies.children.forEach((enemy: any) => {
       if (!this.player) return;
 
-      // Move towards player
       const distance = Phaser.Math.Distance.Between(
         enemy.x,
         enemy.y,
@@ -429,7 +420,6 @@ export default class CompleteGameScene extends Phaser.Scene {
         enemy.setVelocity(vx, vy);
       }
 
-      // Face player
       const angle = Phaser.Math.Angle.Between(
         enemy.x,
         enemy.y,
@@ -443,7 +433,6 @@ export default class CompleteGameScene extends Phaser.Scene {
   private updateCollisions() {
     if (!this.player || !this.enemies || !this.bullets) return;
 
-    // Bullets hitting enemies
     this.physics.overlap(
       this.bullets,
       this.enemies,
@@ -453,7 +442,6 @@ export default class CompleteGameScene extends Phaser.Scene {
       }
     );
 
-    // Enemies hitting player
     this.physics.overlap(
       this.player,
       this.enemies,
@@ -481,7 +469,6 @@ export default class CompleteGameScene extends Phaser.Scene {
     this.lastFireTime = now;
     this.playerData.ammo[this.playerData.currentWeapon]--;
 
-    // Create bullet
     const speed = 600;
     const vx = Math.cos(this.playerData.angle) * speed;
     const vy = Math.sin(this.playerData.angle) * speed;
@@ -490,12 +477,10 @@ export default class CompleteGameScene extends Phaser.Scene {
     bullet.setVelocity(vx, vy);
     bullet.setData('damage', weapon.damage);
 
-    // Play sound
     if (this.sounds['gunshot']) {
       this.sounds['gunshot'].play();
     }
 
-    // Create muzzle flash
     this.createMuzzleFlash();
   }
 
@@ -516,7 +501,6 @@ export default class CompleteGameScene extends Phaser.Scene {
     enemy.health -= damage;
 
     if (enemy.health <= 0) {
-      // Apply reward multiplier from level config
       const baseReward = 100;
       const reward = baseReward * (this.levelConfig?.rewardMultiplier || 1);
       this.playerData.score += Math.round(reward);
@@ -572,7 +556,6 @@ export default class CompleteGameScene extends Phaser.Scene {
     if (!this.waveInProgress) return;
     if (!this.enemies) return;
 
-    // Spawn enemies gradually
     if (
       this.enemiesSpawned < this.enemiesPerWave &&
       this.enemyCount < this.enemiesPerWave
@@ -582,7 +565,6 @@ export default class CompleteGameScene extends Phaser.Scene {
       this.enemyCount++;
     }
 
-    // Wave complete
     if (this.enemiesSpawned >= this.enemiesPerWave && this.enemyCount === 0) {
       this.completeWave();
     }
@@ -596,19 +578,12 @@ export default class CompleteGameScene extends Phaser.Scene {
     const x = this.player.x + Math.cos(angle) * distance;
     const y = this.player.y + Math.sin(angle) * distance;
 
-    const graphics = this.make.graphics({ x: 0, y: 0, add: false });
-    graphics.fillStyle(0xaa0000, 1);
-    graphics.fillRectShape(new Phaser.Geom.Rectangle(0, 0, 24, 24));
-    graphics.fillStyle(0xffff00, 1);
-    graphics.fillCircle(12, 6, 3);
-    graphics.generateTexture(`enemyTexture_${Date.now()}`, 24, 24);
-    graphics.destroy();
+    const enemyType = Math.random() > 0.7 ? 'enemy_tank' : 'enemy_basic';
 
     const baseEnemyHealth = 30 + this.playerData.wave * 5;
     const baseEnemySpeed = 80 + this.playerData.wave * 10;
     const baseEnemyDamage = 5 + this.playerData.wave * 2;
 
-    // Apply level difficulty multipliers
     const enemyHealth = this.levelConfig
       ? baseEnemyHealth * this.levelConfig.enemyDamageMultiplier
       : baseEnemyHealth;
@@ -616,23 +591,21 @@ export default class CompleteGameScene extends Phaser.Scene {
       ? baseEnemyDamage * this.levelConfig.enemyDamageMultiplier
       : baseEnemyDamage;
 
-    const enemy = this.enemies.create(
-      x,
-      y,
-      `enemyTexture_${Date.now()}`
-    ) as any;
+    const enemy = this.enemies.create(x, y, enemyType) as any;
     enemy.setBounce(1);
     enemy.setCollideWorldBounds(true);
     enemy.health = enemyHealth;
     enemy.maxHealth = enemyHealth;
     enemy.speed = baseEnemySpeed;
     enemy.damage = enemyDamage;
+
+    enemy.setScale(0.04);
+    enemy.setDisplaySize(40, 40);
   }
 
   private completeWave() {
     this.playerData.wave++;
-    
-    // Apply wave multiplier from level config
+
     let newEnemiesPerWave = this.levelConfig?.initialEnemies || 5;
     if (this.levelConfig) {
       newEnemiesPerWave = Math.round(
@@ -642,7 +615,7 @@ export default class CompleteGameScene extends Phaser.Scene {
     } else {
       newEnemiesPerWave = Math.min(5 + this.playerData.wave, 20);
     }
-    
+
     this.enemiesPerWave = newEnemiesPerWave;
     this.waveInProgress = false;
 
@@ -687,20 +660,19 @@ export default class CompleteGameScene extends Phaser.Scene {
   private getDifficultyColor(): string {
     switch (this.levelConfig?.difficulty) {
       case 'Easy':
-        return '#4a9e4a'; // Green
+        return '#4a9e4a';
       case 'Normal':
-        return '#4a7a9e'; // Blue
+        return '#4a7a9e';
       case 'Hard':
-        return '#9e6b4a'; // Orange
+        return '#9e6b4a';
       case 'Insane':
-        return '#9e4a4a'; // Red
+        return '#9e4a4a';
       default:
         return '#ffffff';
     }
   }
 
   private showPauseMenu() {
-    // Simple pause overlay
     const overlay = this.add.rectangle(400, 300, 800, 600, 0x000000, 0.7);
     overlay.setScrollFactor(0);
 
@@ -735,9 +707,9 @@ export default class CompleteGameScene extends Phaser.Scene {
       400,
       200,
       `GAME OVER\n\nLevel: ${levelName}\nFinal Score: ${this.playerData.score}\nWave: ${this.playerData.wave}\nKills: ${this.playerData.kills}`,
-      { 
-        font: '28px Arial', 
-        color: '#ff0000', 
+      {
+        font: '28px Arial',
+        color: '#ff0000',
         align: 'center',
         backgroundColor: '#000000',
         padding: { x: 20, y: 20 }
@@ -747,7 +719,6 @@ export default class CompleteGameScene extends Phaser.Scene {
     text.setScrollFactor(0);
     text.setDepth(101);
 
-    // Create "Return to Menu" button
     const buttonWidth = 200;
     const buttonHeight = 50;
     const button = this.add.rectangle(400, 380, buttonWidth, buttonHeight, 0x6b5d4f);
