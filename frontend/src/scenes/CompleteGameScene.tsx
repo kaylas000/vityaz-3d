@@ -1,0 +1,21 @@
+﻿import Phaser from "phaser"
+
+export default class CompleteGameScene extends Phaser.Scene {
+  constructor() {
+    super("CompleteGame")
+  }
+
+  preload() {
+    this.load.image("player", "./assets/sprites/player.png")
+    this.load.image("enemy_basic", "./assets/sprites/enemy_basic.png")
+    this.load.image("enemy_tank", "./assets/sprites/enemy_tank.png")
+  }
+
+  create() {
+    this.physics.world.setBounds(0, 0, 800, 600)
+    this.add.text(400, 300, "GAME RUNNING", { fontSize: "32px", color: "#ffffff" }).setOrigin(0.5)
+    console.log("✅ CompleteGameScene loaded!")
+  }
+
+  update() {}
+}
