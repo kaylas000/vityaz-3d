@@ -1,0 +1,49 @@
+name: Frontend Build & Game Engine Test
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend-build-test.yml'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package.json'
+      
+      - name: Install Dependencies
+        working-directory: frontend
+        run: npm ci
+      
+      - name: TypeScript Check
+        working-directory: frontend
+        run: npx tsc --noEmit
+      
+      - name: Build Frontend
+        working-directory: frontend
+        run: npm run build
+      
+      - name: Verify Game Components
+        run: |
+          echo "Verifying GameEngine.ts"
+          test -f frontend/src/game/GameEngine.ts && echo "✓ GameEngine.ts exists"
+          echo "Verifying Player.ts"
+          test -f frontend/src/game/Player.ts && echo "✓ Player.ts exists"
+          echo "Verifying GameScene.tsx"
+          test -f frontend/src/components/GameScene.tsx && echo "✓ GameScene.tsx exists"
+      
+      - name: Code Quality Metrics
+        run: |
+          echo "Game Engine LOC:"
+          wc -l frontend/src/game/GameEngine.ts || echo "0"
+          echo "Player LOC:"
+          wc -l frontend/src/game/Player.ts || echo "0"
+          echo "GameScene LOC:"
+          wc -l frontend/src/components/GameScene.tsx || echo "0"
