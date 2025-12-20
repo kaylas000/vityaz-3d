@@ -1,2 +1,49 @@
-{\n  \"name\": \"Vityaz 3D Dev Environment\",\n  \"image\": \"mcr.microsoft.com/devcontainers/javascript-node:18-bullseye\",\n  \"features\": {\n    \"ghcr.io/devcontainers/features/git:1\": {},\n    \"ghcr.io/devcontainers/features/github-cli:1\": {}\n  },\n  \"forwardPorts\": [3000, 5000, 8080],\n  \"portsAttributes\": {\n    \"3000\": {\n      \"label\": \"Frontend\",\n      \"onAutoForward\": \"notify\"\n    },\n    \"5000\": {\n      \"label\": \"Backend\",\n      \"onAutoForward\": \"notify\"\n    },\n    \"8080\": {\n      \"label\": \"Dev Server\",\n      \"onAutoForward\": \"notify\"\n    }\n  },\n  \"postCreateCommand\": \"bash .devcontainer/post-create.sh\",\n  \"customizations\": {\n    \"vscode\": {\n      \"extensions\": [\n        \"ms-vscode.vscode-typescript-next\",\n        \"dbaeumer.vscode-eslint\",\n        \"esbenp.prettier-vscode\",\n        \"ms-vscode-remote.remote-containers\",\n        \"GitHub.copilot\",\n        \"eamodio.gitlens\"\n      ],\n      \"settings\": {\n        \"[javascript]\": {\n          \"editor.defaultFormatter\": \"esbenp.prettier-vscode\",\n          \"editor.formatOnSave\": true\n        },\n        \"[json]\": {\n          \"editor.defaultFormatter\": \"esbenp.prettier-vscode\",\n          \"editor.formatOnSave\": true\n        },\n        \"editor.codeActionsOnSave\": {\n          \"source.fixAll.eslint\": true\n        }\n      }\n    }\n  }\n}\n"
-<parameter name="sha">
+{
+  "name": "Vityaz 3D Dev Environment",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:18-bullseye",
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "forwardPorts": [3000, 5000, 8080],
+  "portsAttributes": {
+    "3000": {
+      "label": "Frontend",
+      "onAutoForward": "notify"
+    },
+    "5000": {
+      "label": "Backend",
+      "onAutoForward": "notify"
+    },
+    "8080": {
+      "label": "Dev Server",
+      "onAutoForward": "notify"
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.vscode-typescript-next",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "ms-vscode-remote.remote-containers",
+        "GitHub.copilot",
+        "eamodio.gitlens"
+      ],
+      "settings": {
+        "[javascript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.formatOnSave": true
+        },
+        "[json]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.formatOnSave": true
+        },
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": true
+        }
+      }
+    }
+  }
+}
