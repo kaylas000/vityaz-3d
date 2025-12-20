@@ -1,14 +1,20 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
-  roots: ['<rootDir>/src', '<rootDir>/__tests__'],
-  testMatch: ['**/__tests__/**/*.test.ts', '**/__tests__/**/*.test.tsx', '**/*.test.ts', '**/*.test.tsx'],
+  roots: ['<rootDir>/src'],
+  testMatch: ['**/__tests__/**/*.ts?(x)', '**/?(*.)+(spec|test).ts?(x)'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  transform: {
+    '^.+\\.tsx?$': 'ts-jest',
+  },
+  moduleNameMapper: {
+    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+  },
+  setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
     '!src/**/*.d.ts',
     '!src/index.tsx',
-    '!src/reportWebVitals.ts',
   ],
   coverageThreshold: {
     global: {
@@ -18,26 +24,4 @@ module.exports = {
       statements: 50,
     },
   },
-  moduleNameMapper: {
-    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-    '\\.(gif|ttf|eot|svg|png|jpg|jpeg)$': '<rootDir>/__mocks__/fileMock.js',
-  },
-  setupFilesAfterEnv: ['<rootDir>/__tests__/setupTests.ts'],
-  globals: {
-    'ts-jest': {
-      tsconfig: {
-        jsx: 'react-jsx',
-        esModuleInterop: true,
-        allowSyntheticDefaultImports: true,
-      },
-    },
-  },
-  transform: {
-    '^.+\\.tsx?$': 'ts-jest',
-  },
-  testTimeout: 10000,
-  verbose: true,
-  bail: false,
-  maxWorkers: '50%',
-  errorOnDeprecated: true,
 };
