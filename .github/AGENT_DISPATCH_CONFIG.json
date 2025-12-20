@@ -1,0 +1,102 @@
+{
+  "orchestrator": {
+    "name": "VITYAZ Spec Navy Operations",
+    "description": "Multi-agent orchestration for Phase 3: 3D Spec Navy Fighter Combat",
+    "version": "2.0"
+  },
+  "current_phase": {
+    "name": "Phase 3: 3D Combat System",
+    "status": "active",
+    "start_date": "2025-12-21",
+    "tasks": [
+      {
+        "id": "phase3-001",
+        "name": "Spec Navy Fighter 3D Model & System",
+        "description": "Create 3D бойца спецназа с полной системой анимаций и физики",
+        "agent": "AGENT 1: 3D Engine",
+        "components": [
+          "SpecNavyFighter.ts",
+          "LightingManager.ts",
+          "CameraController.ts",
+          "TacticalArena.ts"
+        ],
+        "loc_target": 600,
+        "priority": "critical",
+        "dependencies": []
+      },
+      {
+        "id": "phase3-002",
+        "name": "Testing & Backend Integration",
+        "description": "Unit tests для 3D компонентов и backend integration",
+        "agent": "AGENT 2: Backend & Tests",
+        "components": [
+          "SpecNavyFighter.test.ts",
+          "LightingManager.test.ts",
+          "CameraController.test.ts",
+          "TacticsIntegration.ts"
+        ],
+        "loc_target": 500,
+        "priority": "high",
+        "dependencies": ["phase3-001"]
+      },
+      {
+        "id": "phase3-003",
+        "name": "TON Smart Contracts & Documentation",
+        "description": "NFT боца спецназа и документация API",
+        "agent": "AGENT 3: TON & Docs",
+        "components": [
+          "SpecNavyFighterNFT.fc",
+          "TacticsToken.fc",
+          "SPEC_NAVY_FIGHTER_GUIDE.md",
+          "API_DOCUMENTATION.md"
+        ],
+        "loc_target": 400,
+        "priority": "high",
+        "dependencies": []
+      }
+    ]
+  },
+  "agents": {
+    "AGENT_1": {
+      "name": "3D Engine Developer",
+      "role": "Frontend 3D Components",
+      "specialization": ["BabylonJS", "3D Models", "Camera Systems", "Lighting"],
+      "github_actions": ".github/workflows/agent-orchestrator.yml#agent1-3d-engine",
+      "concurrent_tasks": 3
+    },
+    "AGENT_2": {
+      "name": "Backend & QA Specialist",
+      "role": "Testing & Backend Integration",
+      "specialization": ["TypeScript", "Jest", "Backend", "Integration Testing"],
+      "github_actions": ".github/workflows/agent-orchestrator.yml#agent2-backend",
+      "concurrent_tasks": 3
+    },
+    "AGENT_3": {
+      "name": "Blockchain & Documentation",
+      "role": "TON Smart Contracts & Docs",
+      "specialization": ["TON", "FunC", "Documentation", "API Design"],
+      "github_actions": ".github/workflows/agent-orchestrator.yml#agent3-blockchain",
+      "concurrent_tasks": 2
+    }
+  },
+  "orchestrator_commands": {
+    "start_phase": "github.event.workflow_dispatch",
+    "dispatch_agents": "POST /repos/{owner}/{repo}/dispatches",
+    "monitor_pr": "github.event.pull_request",
+    "merge_pr": "Approved by orchestrator"
+  },
+  "timeline": {
+    "agent_dispatch": "T+0 min",
+    "agent_work_parallel": "T+0-180 min",
+    "pr_creation": "T+120-150 min",
+    "orchestrator_review": "T+150-160 min",
+    "merge_and_proceed": "T+160 min"
+  },
+  "success_criteria": {
+    "all_agents_completed": true,
+    "all_prs_created": true,
+    "code_review_passed": true,
+    "merged_to_main": true,
+    "all_tests_passing": true
+  }
+}
