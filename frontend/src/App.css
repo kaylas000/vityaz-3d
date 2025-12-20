@@ -1,9 +1,79 @@
-.vityaz-container {
-  width: 100%;
-  height: 100%;
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.game-container {
+.app-header {
+  text-align: center;
+  padding: 40px 20px;
+  border-bottom: 2px solid #e94560;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.app-header h1 {
+  margin: 0 0 10px 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #e94560;
+  text-shadow: 0 2px 4px rgba(233, 69, 96, 0.3);
+}
+
+.app-header p {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #b0b0ff;
+}
+
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.game-wrapper {
   width: 100%;
-  height: 100%;
+  max-width: 900px;
+  margin-bottom: 20px;
+}
+
+.game-status {
+  background: rgba(233, 69, 96, 0.1);
+  border: 2px solid #e94560;
+  border-radius: 8px;
+  padding: 15px 25px;
+  margin-top: 20px;
+  animation: slideDown 0.3s ease;
+}
+
+.game-status p {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.app-footer {
+  text-align: center;
+  padding: 20px;
+  border-top: 1px solid #e94560;
+  background: rgba(0, 0, 0, 0.3);
+  font-size: 0.9rem;
+  color: #999;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

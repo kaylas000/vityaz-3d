@@ -1,56 +1,43 @@
-import { useEffect, useRef } from 'react'
-import * as BABYLON from 'babylon.js'
-import '@babylonjs/loaders'
-import '@babylonjs/inspector'
-import GameScene3D from './game3d/scenes/GameScene3D'
-import './App.css'
+import React, { useState } from 'react';
+import GameScene from './components/GameScene';
+import './App.css';
 
-let gameScene3D: GameScene3D | null = null
+const App: React.FC = () => {
+  const [gameStarted, setGameStarted] = useState(false);
 
-export default function App() {
-  const containerRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!containerRef.current) return
-
-    // Create canvas element dynamically
-    const canvas = document.createElement('canvas')
-    canvas.style.width = '100%'
-    canvas.style.height = '100%'
-    canvas.style.display = 'block'
-    canvas.style.margin = '0'
-    canvas.style.padding = '0'
-    containerRef.current.appendChild(canvas)
-
-    // Create Babylon.js engine with options
-    const engine = new BABYLON.Engine(canvas, true, {
-      antialias: true,
-      stencil: true,
-      preserveDrawingBuffer: false,
-    })
-
-    // Create and initialize game scene
-    gameScene3D = new GameScene3D(canvas, engine)
-
-    // Handle window resize
-    const onWindowResize = () => {
-      engine.resize()
-    }
-    window.addEventListener('resize', onWindowResize)
-
-    console.log('✅ App.tsx - Babylon.js engine initialized')
-
-    // Cleanup on unmount
-    return () => {
-      gameScene3D?.dispose()
-      engine.dispose()
-      window.removeEventListener('resize', onWindowResize)
-    }
-  }, [])
+  const handleGameStart = () => {
+    console.log('Game started!');
+    setGameStarted(true);
+  };
 
   return (
-    <div className="vityaz-container">
-      <div ref={containerRef} className="game-container" id="game-container" />
+    <div className="app-container">
+      <header className="app-header">
+        <h1>🎮 VITYAZ: Special Operations</h1>
+        <p>Crypto-powered Gaming Ecosystem</p>
+      </header>
+      
+      <main className="app-main">
+        <div className="game-wrapper">
+          <GameScene 
+            width={800} 
+            height={600}
+            onGameStart={handleGameStart}
+          />
+        </div>
+        
+        {gameStarted && (
+          <div className="game-status">
+            <p>✅ Game Engine Initialized</p>
+          </div>
+        )}
+      </main>
+
+      <footer className="app-footer">
+        <p>&copy; 2025 VITYAZ Project | TON Blockchain Gaming</p>
+      </footer>
     </div>
-  )
-}
+  );
+};
+
+export default App;
