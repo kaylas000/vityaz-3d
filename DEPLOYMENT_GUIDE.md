@@ -1,452 +1,236 @@
-# 🚀 VITYAZ: Complete Deployment Guide
+# VITYAZ Special Operations - Deployment Guide
 
-**Status:** 🔴 PRODUCTION READY  
-**Last Updated:** December 14, 2025  
-**Version:** 1.0.0
+## Локальное тестирование (Development)
 
----
+### Предварительные требования
+- Node.js 18+
+- npm или pnpm
 
-## 🚀 QUICK START (5 Minutes)
-
-### Option 1: Run Locally (Recommended for Development)
+### Шаги запуска
 
 ```bash
-# 1. Install dependencies
-cd frontend && npm install
-cd ../backend && npm install
-
-# 2. Start backend (Terminal 1)
-cd backend
-npm run dev
-# Backend running on http://localhost:3000
-
-# 3. Start frontend (Terminal 2)
+# 1. Установить зависимости
 cd frontend
-npm run dev
-# Frontend running on http://localhost:5173
+npm install
 
-# 4. Open browser
-# Go to http://localhost:5173
+# 2. Запустить dev сервер
+npm run dev
+
+# Сервер будет доступен на http://localhost:5173
 ```
 
-**Features enabled locally:**
-- ✅ Full game (single-player)
-- ✅ Leaderboard API
-- ✅ In-memory database
-- ✅ Hot reload
-
----
-
-### Option 2: Docker (Recommended for Production)
+## Тестирование
 
 ```bash
-# 1. Build and start all services
+# Запустить все тесты
+npm test
+
+# Запустить с покрытием
+npm test -- --coverage
+
+# Запустить лизер
+npm run lint
+
+# Проверить типы TypeScript
+npm run type-check
+```
+
+## Production Build
+
+```bash
+# Собрать production версию
+cd frontend
+npm run build
+
+# Вывод будет в папке dist/
+```
+
+## Деплой вариант 1: Vercel (Рекомендуется для быстрого старта)
+
+### Шаги:
+
+1. Установить Vercel CLI:
+```bash
+npm install -g vercel
+```
+
+2. Залогиться на Vercel:
+```bash
+vercel login
+```
+
+3. Развернуть проект:
+```bash
+vercel --prod
+```
+
+### Получение переменных окружения
+
+Для GitHub Actions CI/CD нужны:
+- `VERCEL_TOKEN` - токен для деплоя
+- `VERCEL_ORG_ID` - ID организации
+- `VERCEL_PROJECT_ID` - ID проекта
+
+Получить можно из файла `.vercel/project.json` после первого деплоя.
+
+## Деплой вариант 2: Docker
+
+### Локальное тестирование с Docker
+
+```bash
+# Собрать Docker образ
+docker build -t vityaz:latest .
+
+# Запустить контейнер
+docker run -p 3000:3000 vityaz:latest
+
+# Сервер будет доступен на http://localhost:3000
+```
+
+### Docker Compose
+
+```bash
+# Запустить с docker-compose
 docker-compose up -d
 
-# 2. Services running:
-# Frontend: http://localhost:5173
-# Backend API: http://localhost:3000
-# WebSocket: ws://localhost:3000
-# PostgreSQL: localhost:5432
-# Redis: localhost:6379
+# Проверить логи
+docker-compose logs -f
 
-# 3. View logs
-docker-compose logs -f backend
-
-# 4. Stop services
+# Остановить
 docker-compose down
 ```
 
-**Services included:**
-- ✅ Frontend (Vite/React)
-- ✅ Backend (Node.js/Express)
-- ✅ PostgreSQL database
-- ✅ Redis cache
-- ✅ Multiplayer WebSocket
+## Деплой вариант 3: VPS (DigitalOcean, Linode, и т.д.)
 
----
+### Требования:
+- Ubuntu 20.04+
+- Docker и Docker Compose
+- Nginx (reverse proxy)
 
-### Option 3: Heroku Deployment (1 Command)
+### Шаги:
 
+1. SSH на VPS:
 ```bash
-# 1. Install Heroku CLI
-# https://devcenter.heroku.com/articles/heroku-cli
-
-# 2. Login
-heroku login
-
-# 3. Create app
-heroku create vityaz-special-ops
-
-# 4. Deploy
-git push heroku main
-
-# 5. Open app
-heroku open
-
-# View logs
-heroku logs --tail
+ssh root@your-vps-ip
 ```
 
-**Automatically configured:**
-- ✅ Free PostgreSQL database
-- ✅ SSL certificate
-- ✅ Auto-scaling
-- ✅ CD/CD pipeline
-
----
-
-### Option 4: AWS Deployment
-
+2. Установить Docker и Docker Compose:
 ```bash
-# 1. Setup AWS CLI
-aws configure
-
-# 2. Build Docker image
-docker build -t vityaz:latest .
-
-# 3. Push to ECR
-aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin YOUR_ECR_URL
-docker tag vityaz:latest YOUR_ECR_URL/vityaz:latest
-docker push YOUR_ECR_URL/vityaz:latest
-
-# 4. Create ECS task definition (use provided template)
-# See: aws-ecs-task-definition.json
-
-# 5. Deploy to ECS
-aws ecs run-task --cluster vityaz --task-definition vityaz:1
-
-# 6. Get load balancer URL
-aws elbv2 describe-load-balancers --names vityaz-lb
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
 ```
 
----
-
-## 📊 Project Structure
-
-```
-vityaz-special-operations/
-├── frontend/                    # React + Vite frontend
-│  ├── src/
-│  │  ├── scenes/
-│  │  │  ├── CompleteGameScene.ts  # Main game
-│  │  │  └── MenuScene.ts
-│  │  ├── components/
-│  │  ├── App.tsx
-│  │  └── main.ts
-│  ├── public/
-│  └── package.json
-├── backend/                    # Node.js + Express backend
-│  ├── src/
-│  │  ├── server.ts
-│  │  ├── routes/
-│  │  ├── models/
-│  │  └── middleware/
-│  ├── package.json
-│  └── tsconfig.json
-├── docs/                      # Documentation
-├── Dockerfile                 # Docker production build
-├── docker-compose.yml         # Local development
-├── Procfile                   # Heroku deployment
-├── heroku.yml                 # Heroku config
-├── .github/workflows/         # CI/CD pipelines
-└── README.md
-```
-
----
-
-## 📋 Game Features (Implemented)
-
-### 🐫 Gameplay
-- ✅ **Movement:** 8-directional (W/A/S/D)
-- ✅ **Combat:** 4 weapons (AK-74M, SVD, RPK-74, PMM)
-- ✅ **Enemies:** AI-controlled enemies with waves
-- ✅ **Health System:** Player health and damage
-- ✅ **Score Tracking:** Points for kills
-- ✅ **Wave Progression:** Increasing difficulty
-
-### 🎮 UI/UX
-- ✅ **HUD:** Health, ammo, score, wave display
-- ✅ **Main Menu:** Play, Settings, Exit
-- ✅ **Pause Menu:** In-game pause functionality
-- ✅ **Game Over Screen:** Final stats
-- ✅ **Settings:** Volume, graphics, controls
-
-### 🌐 Multiplayer
-- ✅ **WebSocket:** Real-time player sync
-- ✅ **Room System:** Create and join game rooms
-- ✅ **Leaderboard:** Track top scores
-- ✅ **Player Data:** Save stats
-
-### 📚 API Endpoints
-
-```
-GET  /api/health              Health check
-POST /api/players             Create player
-GET  /api/players/:id         Get player stats
-POST /api/players/:id/score   Update score
-GET  /api/leaderboard         Top 100 players
-GET  /api/rooms               List available rooms
-POST /api/rooms               Create room
-
-WS   /socket.io               WebSocket connection
-```
-
----
-
-## 🚀 Deployment Checklist
-
-### Before Deploying
-
-- [ ] All tests passing (`npm test`)
-- [ ] No console errors
-- [ ] Environment variables configured
-- [ ] Database migrations run
-- [ ] Assets optimized
-- [ ] Security headers configured
-
-### Local Testing
-
+3. Клонировать репозиторий:
 ```bash
-# Run full test suite
-npm run test:full
-
-# Build production bundle
-npm run build
-
-# Run production build locally
-npm run start:prod
-
-# Check performance
-npm run analyze
+git clone https://github.com/kaylas000/vityaz.git /opt/vityaz
+cd /opt/vityaz
 ```
 
-### Deployment Command
-
+4. Запустить с Docker Compose:
 ```bash
-# Automatic deployment via GitHub Actions
-# Just push to main branch:
-git add .
-git commit -m "feat: update game features"
-git push origin main
-
-# GitHub Actions will:
-# 1. Run tests
-# 2. Build Docker image
-# 3. Push to Docker Hub
-# 4. Deploy to Heroku
-# 5. Notify on Slack (optional)
+docker-compose up -d
 ```
 
----
-
-## 🏱️ Environment Variables
-
-### Frontend (.env)
-
+5. Установить Nginx:
 ```bash
-VITE_API_URL=https://vityaz-api.herokuapp.com  # Backend URL
-VITE_WS_URL=wss://vityaz-api.herokuapp.com     # WebSocket URL
-VITE_ANALYTICS_ID=UA-xxxxx-x                   # Google Analytics
+sudo apt update
+sudo apt install nginx
 ```
 
-### Backend (.env)
-
+6. Создать конфиг Nginx:
 ```bash
-NODE_ENV=production
-PORT=3000
-DATABASE_URL=postgresql://user:pass@host:port/db
-REDIS_URL=redis://host:port
-JWT_SECRET=your-secret-key
-CORS_ORIGIN=https://vityaz.com
-LOG_LEVEL=info
+sudo nano /etc/nginx/sites-available/vityaz
 ```
 
----
+Вставить:
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
 
-## 📊 Monitoring & Logs
-
-### Local Development
-
-```bash
-# View backend logs
-cd backend && npm run dev
-
-# View frontend logs (browser console)
-# Press F12
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
 ```
 
-### Production (Heroku)
-
+7. Включить конфиг и перезагрузить Nginx:
 ```bash
-# View real-time logs
-heroku logs --tail
-
-# View specific app logs
-heroku logs --app vityaz-special-ops --tail
-
-# Export logs
-heroku logs --app vityaz-special-ops > logs.txt
+sudo ln -s /etc/nginx/sites-available/vityaz /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
 ```
 
-### Production (AWS)
-
+8. Установить SSL (Let's Encrypt):
 ```bash
-# View CloudWatch logs
-aws logs tail /ecs/vityaz --follow
-
-# View ECS metrics
-aws cloudwatch get-metric-statistics ...
+sudo apt install certbot python3-certbot-nginx
+sudo certbot --nginx -d your-domain.com
 ```
 
----
+## GitHub Actions CI/CD
 
-## 🔐 Security
+Проект уже имеет настроенный GitHub Actions workflow (`.github/workflows/deploy.yml`).
 
-### Implemented
+Для включения:
 
-- ✅ **CORS:** Configured for specific origins
-- ✅ **Rate Limiting:** API request throttling
-- ✅ **Input Validation:** All inputs validated
-- ✅ **SQL Injection Prevention:** Parameterized queries
-- ✅ **HTTPS:** SSL/TLS in production
-- ✅ **JWT Auth:** Token-based authentication ready
+1. Перейдите на GitHub репозиторий
+2. Settings → Secrets and variables → Actions
+3. Добавьте secrets:
+   - `VERCEL_TOKEN`
+   - `VERCEL_ORG_ID`
+   - `VERCEL_PROJECT_ID`
 
-### Setup
+После этого при каждом push на `main` ветку будет:
+- Запущены тесты
+- Собран проект
+- Автоматически развернут на Vercel
 
+## Мониторинг и логирование
+
+### Docker логи
 ```bash
-# Generate JWT secret
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-
-# Configure security headers
-# See: backend/src/middleware/security.ts
+docker-compose logs -f vityaz-game
 ```
 
----
-
-## 🚀 Performance
-
-### Optimizations Included
-
-- ✅ **Lazy Loading:** Components load on demand
-- ✅ **Code Splitting:** Webpack optimization
-- ✅ **Caching:** Redis for session data
-- ✅ **CDN Ready:** Static assets can use CloudFront
-- ✅ **Compression:** Gzip enabled
-- ✅ **Minification:** Production builds minified
-
-### Metrics
-
+### VPS логи (Nginx)
 ```bash
-# Frontend bundle size
-cd frontend && npm run analyze
-
-# Backend performance
-cd backend && npm run bench
-
-# Load test
-ab -n 1000 -c 100 https://vityaz.herokuapp.com
+sudo tail -f /var/log/nginx/access.log
+sudo tail -f /var/log/nginx/error.log
 ```
 
----
-
-## 📘 Troubleshooting
-
-### Port Already in Use
-
+### Healthcheck
 ```bash
-# Find and kill process
+curl http://localhost:3000
+```
+
+## Troubleshooting
+
+### Ошибка: Port already in use
+```bash
+# Найти процесс на порту 3000
 lsof -i :3000
+
+# Убить процесс
 kill -9 <PID>
-
-# Or use different port
-PORT=3001 npm run dev
 ```
 
-### Database Connection Error
-
+### Ошибка: Build failed
 ```bash
-# Check database URL
-echo $DATABASE_URL
-
-# Test connection
-psql $DATABASE_URL -c "SELECT 1"
-
-# Run migrations
-npm run migrate
-```
-
-### Build Failures
-
-```bash
-# Clear node_modules
+# Очистить node_modules
 rm -rf node_modules package-lock.json
 npm install
-
-# Clear cache
-npm cache clean --force
-
-# Rebuild
-npm run build
 ```
 
----
-
-## 🎉 Next Steps
-
-### Immediate (Week 1)
-- [ ] Deploy to staging environment
-- [ ] Run load tests
-- [ ] Security audit
-- [ ] Performance testing
-
-### Short-term (Month 1)
-- [ ] Setup monitoring (Sentry, New Relic)
-- [ ] Configure analytics
-- [ ] Setup auto-scaling
-- [ ] Create backup strategy
-
-### Medium-term (Month 3)
-- [ ] Add database persistence
-- [ ] Implement authentication
-- [ ] Setup CDN
-- [ ] Add mobile support
-
-### Long-term (Month 6+)
-- [ ] Professional graphics (hire artist)
-- [ ] Advanced features (clans, tournaments)
-- [ ] Blockchain integration
-- [ ] Mobile native apps
-
----
-
-## 🏣 Support & Resources
-
-- **Documentation:** `/docs` directory
-- **Issues:** GitHub Issues
-- **Discussions:** GitHub Discussions
-- **Community:** Discord (setup in docs)
-
----
-
-## 📄 License
-
-MIT License - See LICENSE file
-
----
-
-**Ready to deploy?**
-
+### Docker image не собирается
 ```bash
-git push origin main
+# Пересобрать без кеша
+docker build --no-cache -t vityaz:latest .
 ```
 
-Your game will be live in **~5 minutes**! 🚀
-
----
-
-**Created:** December 14, 2025  
-**Status:** 🔴 PRODUCTION READY  
-**Next Review:** January 14, 2026  
-
-🎮 **VITYAZ: Special Operations - Ready to Launch** 🚀

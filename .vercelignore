@@ -1,0 +1,10 @@
+node_modules
+.git
+.gitignore
+README.md
+.env.example
+*.test.ts
+*.test.tsx
+__tests__
+.vscode
+.DS_Store

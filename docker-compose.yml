@@ -1,56 +1,14 @@
-version: '3.8'
-
+version: '3.9'
 services:
-  backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: backend-builder
+  vityaz-game:
+    build: .
     ports:
-      - '3000:3000'
+      - "3000:3000"
     environment:
-      - NODE_ENV=development
-      - PORT=3000
-      - DATABASE_URL=postgres://user:password@postgres:5432/vityaz
-    volumes:
-      - ./backend/src:/app/backend/src
-    depends_on:
-      - postgres
-    command: npm run start:dev
-
-  frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: frontend-builder
-    ports:
-      - '5173:5173'
-    volumes:
-      - ./frontend/src:/app/frontend/src
-    command: npm run dev
-
-  postgres:
-    image: postgres:15-alpine
-    environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=vityaz
-    ports:
-      - '5432:5432'
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-  redis:
-    image: redis:7-alpine
-    ports:
-      - '6379:6379'
-    volumes:
-      - redis_data:/data
-
-volumes:
-  postgres_data:
-  redis_data:
-
-networks:
-  default:
-    name: vityaz-network
+      - VITE_API_URL=http://localhost:3000
+      - NODE_ENV=production
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
