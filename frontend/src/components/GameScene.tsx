@@ -1,6 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { GameEngine } from '../game/GameEngine';
-import { Player } from '../game/Player';
+import {
+  Engine,
+  Scene,
+  Vector3,
+  HemisphericLight,
+  MeshBuilder,
+  StandardMaterial,
+  Color3,
+  ArcRotateCamera,
+} from '@babylonjs/core';
+import './GameScene.css';
 
 interface GameSceneProps {
   playerName?: string;
@@ -14,10 +23,11 @@ export const GameScene: React.FC<GameSceneProps> = ({
   onError,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const gameEngineRef = useRef<GameEngine | null>(null);
-  const playerRef = useRef<Player | null>(null);
+  const engineRef = useRef<Engine | null>(null);
+  const sceneRef = useRef<Scene | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [gameStatus, setGameStatus] = useState<'initializing' | 'ready' | 'error'>('initializing');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const initializeGame = async () => {
@@ -26,97 +36,149 @@ export const GameScene: React.FC<GameSceneProps> = ({
           throw new Error('Canvas element not found');
         }
 
-        // Initialize game engine
-        gameEngineRef.current = new GameEngine(canvasRef.current);
-        await gameEngineRef.current.initialize();
+        console.log('🎮 Initializing Babylon.js Game Scene...');
 
-        // Create player
-        playerRef.current = new Player(playerName, gameEngineRef.current);
-        playerRef.current.initialize();
+        // Create Babylon Engine
+        const engine = new Engine(canvasRef.current, true, {
+          preserveDrawingBuffer: true,
+          stencil: true,
+        });
+        engineRef.current = engine;
+        console.log('✓ Engine created');
 
-        // Setup input handlers
-        setupInputHandlers();
+        // Create Scene
+        const scene = new Scene(engine);
+        sceneRef.current = scene;
+        scene.collisionsEnabled = true;
+        console.log('✓ Scene created');
 
-        // Setup game loop
-        setupGameLoop();
+        // Create Camera
+        const camera = new ArcRotateCamera(
+          'camera',
+          Math.PI / 2,
+          Math.PI / 2.5,
+          50,
+          new Vector3(0, 0, 0),
+          scene
+        );
+        camera.attachControl(canvasRef.current, true);
+        camera.checkCollisions = true;
+        camera.inertia = 0.7;
+        camera.speed = 0.02;
+        console.log('✓ Camera created');
+
+        // Create Lighting
+        const light = new HemisphericLight('light1', new Vector3(0, 1, 0), scene);
+        light.intensity = 0.7;
+        console.log('✓ Light created');
+
+        // Create Ground
+        const ground = MeshBuilder.CreateGround(
+          'ground',
+          { width: 100, height: 100 },
+          scene
+        );
+        const groundMaterial = new StandardMaterial('groundMat', scene);
+        groundMaterial.diffuse = new Color3(0.2, 0.7, 0.2);
+        ground.material = groundMaterial;
+        ground.checkCollisions = true;
+        console.log('✓ Ground created');
+
+        // Create Player Box
+        const playerBox = MeshBuilder.CreateBox('player', { size: 2 }, scene);
+        playerBox.position.y = 2;
+        const playerMaterial = new StandardMaterial('playerMat', scene);
+        playerMaterial.diffuse = new Color3(0, 0.5, 1);
+        playerBox.material = playerMaterial;
+        playerBox.checkCollisions = true;
+        console.log('✓ Player created');
+
+        // Create enemy dummy
+        const enemyBox = MeshBuilder.CreateBox('enemy', { size: 1.5 }, scene);
+        enemyBox.position.set(10, 1, 10);
+        const enemyMaterial = new StandardMaterial('enemyMat', scene);
+        enemyMaterial.diffuse = new Color3(1, 0, 0);
+        enemyBox.material = enemyMaterial;
+        enemyBox.checkCollisions = true;
+        console.log('✓ Enemy created');
+
+        // Setup input handling
+        const keys: { [key: string]: boolean } = {};
+        const handleKeyDown = (e: KeyboardEvent) => {
+          keys[e.key.toLowerCase()] = true;
+        };
+        const handleKeyUp = (e: KeyboardEvent) => {
+          keys[e.key.toLowerCase()] = false;
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keyup', handleKeyUp);
+
+        // Start render loop
+        let lastTime = Date.now();
+        engine.runRenderLoop(() => {
+          const now = Date.now();
+          const deltaTime = (now - lastTime) / 1000;
+          lastTime = now;
+
+          // Simple player movement
+          const moveSpeed = 0.5;
+          if (keys['w'] || keys['arrowup']) playerBox.position.z += moveSpeed * deltaTime;
+          if (keys['s'] || keys['arrowdown']) playerBox.position.z -= moveSpeed * deltaTime;
+          if (keys['a'] || keys['arrowleft']) playerBox.position.x -= moveSpeed * deltaTime;
+          if (keys['d'] || keys['arrowright']) playerBox.position.x += moveSpeed * deltaTime;
+
+          // Simple enemy AI - move towards player
+          const dirToPlayer = playerBox.position.subtract(enemyBox.position);
+          const dist = Vector3.Distance(playerBox.position, enemyBox.position);
+          if (dist > 2) {
+            const direction = dirToPlayer.normalize();
+            enemyBox.position.addInPlace(direction.scale(0.1 * deltaTime));
+          }
+
+          // Render scene
+          scene.render();
+        });
+
+        // Handle resize
+        window.addEventListener('resize', () => engine.resize());
 
         setGameStatus('ready');
         setIsLoading(false);
         onGameReady?.();
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        console.error('Game initialization error:', errorMessage);
+        console.log('✓ Game ready!');
+      } catch (err) {
+        const errorMsg = err instanceof Error ? err.message : String(err);
+        console.error('❌ Game initialization failed:', errorMsg);
+        setError(errorMsg);
         setGameStatus('error');
         setIsLoading(false);
-        onError?.(errorMessage);
+        onError?.(errorMsg);
       }
     };
 
     initializeGame();
 
-    // Cleanup on component unmount
     return () => {
-      if (gameEngineRef.current) {
-        gameEngineRef.current.dispose();
+      if (engineRef.current) {
+        console.log('🔴 Disposing engine...');
+        engineRef.current.dispose();
       }
     };
   }, [playerName, onGameReady, onError]);
 
-  const setupInputHandlers = () => {
-    if (!playerRef.current) return;
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const keys: { [key: string]: boolean } = {};
-      keys[event.key.toLowerCase()] = true;
-      playerRef.current?.handleInput(keys);
-    };
-
-    const handleKeyUp = (event: KeyboardEvent) => {
-      const keys: { [key: string]: boolean } = {};
-      keys[event.key.toLowerCase()] = false;
-      playerRef.current?.handleInput(keys);
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
-    };
-  };
-
-  const setupGameLoop = () => {
-    if (!gameEngineRef.current || !playerRef.current) return;
-
-    const gameLoop = () => {
-      try {
-        // Update game state
-        playerRef.current?.update(1 / 60); // Assuming 60 FPS
-
-        // Render scene
-        gameEngineRef.current?.render();
-      } catch (error) {
-        console.error('Game loop error:', error);
-        setGameStatus('error');
-      }
-    };
-
-    gameEngineRef.current.setUpdateCallback(gameLoop);
-  };
-
   if (gameStatus === 'error') {
     return (
-      <div className="game-error" style={styles.errorContainer}>
-        <h2>Game Initialization Failed</h2>
-        <p>Please refresh the page to try again.</p>
+      <div style={styles.errorContainer}>
+        <h2 style={styles.errorTitle}>🚨 Game Initialization Failed</h2>
+        <p style={styles.errorMsg}>{error}</p>
+        <p style={styles.errorHint}>Please refresh the page to try again.</p>
       </div>
     );
   }
 
   return (
-    <div className="game-scene" style={styles.container}>
-      {isLoading && <div style={styles.loadingOverlay}>Initializing Game...</div>}
+    <div style={styles.container}>
+      {isLoading && <div style={styles.loadingOverlay}>⏳ Initializing Game...</div>}
       <canvas
         ref={canvasRef}
         style={styles.canvas}
@@ -124,8 +186,11 @@ export const GameScene: React.FC<GameSceneProps> = ({
       />
       <div style={styles.hud}>
         <div style={styles.playerInfo}>
-          <p>Player: {playerName}</p>
-          <p>Status: {gameStatus}</p>
+          <p style={{ margin: '5px 0' }}>🎮 Player: {playerName}</p>
+          <p style={{ margin: '5px 0' }}>Status: {gameStatus}</p>
+          <p style={{ margin: '5px 0', fontSize: '12px', opacity: 0.8 }}>
+            Use WASD to move | Right-click to rotate camera
+          </p>
         </div>
       </div>
     </div>
@@ -154,9 +219,10 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    color: '#fff',
+    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    color: '#00ff00',
     fontSize: '24px',
+    fontFamily: 'monospace',
     zIndex: 10,
   },
   hud: {
@@ -169,9 +235,35 @@ const styles: { [key: string]: React.CSSProperties } = {
     zIndex: 5,
   },
   playerInfo: {
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
     padding: '10px 15px',
     borderRadius: '4px',
-    border: '1px solid #00ff00',
+    border: '2px solid #00ff00',
+  },
+  errorContainer: {
+    position: 'relative',
+    width: '100%',
+    height: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#1a1a1a',
+    color: '#ff6b6b',
+    fontFamily: 'monospace',
+  },
+  errorTitle: {
+    fontSize: '32px',
+    marginBottom: '20px',
+    color: '#ff6b6b',
+  },
+  errorMsg: {
+    fontSize: '16px',
+    marginBottom: '10px',
+    color: '#ffff00',
+  },
+  errorHint: {
+    fontSize: '14px',
+    color: '#999',
   },
 };
