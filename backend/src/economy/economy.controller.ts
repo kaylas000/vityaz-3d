@@ -9,7 +9,7 @@ export class EconomyController {
   constructor(private tokenService: TokenService) {}
 
   @Get('balance')
-  async getBalance(@CurrentUser() user: any) {
+  async getBalance(@CurrentUser() user: any): Promise<any> {
     const balance = await this.tokenService.getBalance(user.id)
     return {
       address: user.tonAddress,
@@ -19,7 +19,7 @@ export class EconomyController {
   }
 
   @Get('history')
-  async getHistory(@CurrentUser() user: any) {
+  async getHistory(@CurrentUser() user: any): Promise<any> {
     return this.tokenService.getTransactionHistory(user.id)
   }
 
@@ -27,25 +27,25 @@ export class EconomyController {
   async transfer(
     @CurrentUser() user: any,
     @Body() body: { toAddress: string; amount: number },
-  ) {
+  ): Promise<any> {
     const result = await this.tokenService.transfer(user.id, body.toAddress, body.amount)
     return result
   }
 
   @Post('stake')
-  async stake(@CurrentUser() user: any, @Body() body: { amount: number; period: number }) {
+  async stake(@CurrentUser() user: any, @Body() body: { amount: number; period: number }): Promise<any> {
     const result = await this.tokenService.stakeTokens(user.id, body.amount, body.period)
     return result
   }
 
   @Post('unstake/:stakeId')
-  async unstake(@CurrentUser() user: any) {
+  async unstake(@CurrentUser() user: any): Promise<any> {
     // Implementation
     return { success: true }
   }
 
   @Get('stats')
-  async getStats() {
+  async getStats(): Promise<any> {
     return this.tokenService.getStats()
   }
 }
