@@ -2,27 +2,35 @@
   position: fixed;
   top: 10px;
   left: 10px;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.85);
   color: #fff;
-  padding: 15px;
+  padding: 14px;
   border-radius: 8px;
   font-family: 'Courier New', monospace;
-  min-width: 250px;
+  min-width: 300px;
+  max-width: 420px;
   z-index: 1000;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+}
+
+.combat-grid {
+  display: grid;
+  grid-template-columns: 1fr 240px;
+  gap: 12px;
 }
 
 .player-stats h3,
 .enemy-stats h3 {
   margin: 0 0 10px 0;
   color: #fff;
-  font-size: 14px;
+  font-size: 13px;
   text-transform: uppercase;
   border-bottom: 2px solid #4CAF50;
-  padding-bottom: 5px;
+  padding-bottom: 4px;
 }
 
 .stat-bar {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .label {
@@ -32,16 +40,16 @@
 }
 
 .bar-container {
-  background: #1a1a1a;
-  border: 1px solid #333;
-  height: 20px;
-  border-radius: 3px;
+  background: #111;
+  border: 1px solid #222;
+  height: 18px;
+  border-radius: 4px;
   overflow: hidden;
-  margin: 2px 0;
+  margin: 2px 0 6px 0;
 }
 
 .bar-container.small {
-  height: 12px;
+  height: 10px;
 }
 
 .bar-fill {
@@ -50,7 +58,7 @@
 }
 
 .bar-fill.health {
-  background: linear-gradient(90deg, #4CAF50, #45a049);
+  background: linear-gradient(90deg, #4CAF50, #47b54a);
 }
 
 .bar-fill.armor {
@@ -65,23 +73,80 @@
   font-size: 11px;
   color: #ccc;
   float: right;
-  margin-top: -18px;
+  margin-top: -16px;
 }
 
 .enemy-stats {
-  margin-top: 15px;
-  border-top: 1px solid #333;
-  padding-top: 10px;
+  margin-top: 8px;
+  border-top: 1px solid #222;
+  padding-top: 8px;
 }
 
 .enemy-entry {
   margin-bottom: 8px;
-  font-size: 11px;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
 }
+
+.enemy-values {
+  color: #bdbdbd;
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+/* Actions and Log */
+.combat-actions-log { }
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.btn {
+  background: #222;
+  color: #fff;
+  border: 1px solid #333;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn.attack { background: linear-gradient(90deg,#e53935,#c62828); border-color: #b71c1c; }
+.btn.defend { background: linear-gradient(90deg,#3949ab,#283593); border-color: #1a237e; }
+.btn.special { background: linear-gradient(90deg,#ff9800,#fb8c00); border-color:#ef6c00 }
+.btn.clear { background: transparent; border: none; color: #bbb; margin-left: 8px; }
+
+.combat-log {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid #222;
+  padding: 8px;
+  border-radius: 6px;
+  max-height: 150px;
+  overflow: auto;
+  font-size: 12px;
+}
+
+.combat-log .log-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:6px;
+}
+
+.combat-log ul { list-style: none; padding: 0; margin: 0; }
+.combat-log li { padding: 2px 0; border-bottom: 1px dashed rgba(255,255,255,0.03); }
+.combat-log li.empty { color: #666; }
 
 .combat-status {
   margin-top: 10px;
-  border-top: 1px solid #333;
+  border-top: 1px solid #222;
   padding-top: 8px;
   text-align: center;
 }
@@ -91,3 +156,20 @@
   font-size: 12px;
   font-weight: bold;
 }
+
+/* Responsive: stack on small screens */
+@media (max-width: 640px) {
+  .combat-ui {
+    left: 8px;
+    right: 8px;
+    top: auto;
+    bottom: 10px;
+    max-width: none;
+    min-width: 0;
+  }
+
+  .combat-grid { grid-template-columns: 1fr; }
+
+  .actions { flex-wrap: wrap; }
+}
+

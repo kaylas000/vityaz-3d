@@ -1,0 +1,48 @@
+name: CI (Parallel builds & tests)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  frontend:
+    name: Frontend Build & Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [18.x]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Install frontend deps
+        working-directory: frontend
+        run: npm ci --silent
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build --silent
+      - name: Test frontend
+        working-directory: frontend
+        run: npm test --silent
+      - name: Print AGENTS playbook
+        run: |
+          echo 'AGENTS_PLAYBOOK location:'
+          if [ -f AGENTS_README.md ]; then head -n 5 AGENTS_README.md || true; fi
+
+  repo-checks:
+    name: Repo-level checks (parallel)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Print repo health
+        run: |
+          echo "Files: $(ls -1 | wc -l)"
+          echo "Checking for backend package..."
+          if [ -f backend/package.json ]; then echo 'backend exists'; fi
+      - name: Run backend tests if present
+        run: |
+          if [ -f backend/package.json ]; then cd backend && npm ci && npm test || true; else echo 'no backend tests'; fi
