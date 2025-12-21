@@ -170,7 +170,7 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   /**
-   * Draw Crimson Beret Symbol
+   * Draw Crimson Beret Symbol - FIXED: Removed graphics.translate() which doesn't exist in Phaser
    */
   private drawCrimsonBeret(
     graphics: Phaser.GameObjects.Graphics,
@@ -178,31 +178,35 @@ export class MainMenuScene extends Phaser.Scene {
     y: number,
     size: number
   ): void {
-    // Beret base (tilted left)
-    graphics.save();
-    graphics.translate(x, y);
-    graphics.rotate(-0.3);
+    // FIXED: Use direct coordinates instead of translate()
+    const offsetX = x;
+    const offsetY = y;
+    const rotation = -0.3;
 
+    // Beret base (tilted left) - use offset coordinates
     graphics.fillStyle(this.VITYAZ_CRIMSON, 1);
     graphics.beginPath();
-    graphics.arc(0, 0, size * 0.7, 0, Math.PI, true);
-    graphics.lineTo(size * 0.7, 0);
+    graphics.arc(offsetX, offsetY, size * 0.7, rotation, Math.PI + rotation, true);
+    graphics.lineTo(offsetX + size * 0.7 * Math.cos(rotation), offsetY + size * 0.7 * Math.sin(rotation));
     graphics.closePath();
     graphics.fillPath();
 
     // Beret band
     graphics.fillStyle(0x1A1A1A, 1);
-    graphics.fillRect(-size * 0.75, size * 0.6, size * 1.5, size * 0.2);
+    graphics.fillRect(
+      offsetX - size * 0.75,
+      offsetY + size * 0.6,
+      size * 1.5,
+      size * 0.2
+    );
 
-    // Gold star insignia
+    // Gold star insignia (simplified as circle due to fillStar availability)
     graphics.fillStyle(this.VITYAZ_GOLD, 1);
-    graphics.fillStar(0, -size * 0.3, 5, size * 0.25, size * 0.15);
-
-    graphics.restore();
+    graphics.fillCircle(offsetX, offsetY - size * 0.3, size * 0.2);
 
     // Decorative circles
     graphics.lineStyle(2, this.VITYAZ_GOLD, 0.8);
-    graphics.strokeCircleShape(new Phaser.Geom.Circle(x, y, size + 10));
+    graphics.strokeCircleShape(new Phaser.Geom.Circle(offsetX, offsetY, size + 10));
   }
 
   /**
