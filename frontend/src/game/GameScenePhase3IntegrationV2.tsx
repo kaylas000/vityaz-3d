@@ -20,15 +20,12 @@ export const GameScenePhase3IntegrationV2 = () => {
   // BABYLON.js References
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<BABYLON.Engine | null>(null);
-  const sceneRef = useRef<BABYLON.Scene | null>(null);
   const playerMeshRef = useRef<BABYLON.Mesh | null>(null);
   const enemyMeshesRef = useRef<BABYLON.Mesh[]>([]);
 
-  import { GameLoop } from './GameLoop';
-  import { DifficultyLevel } from './EnemyAIDifficulty';
-  // import { DifficultyManager } from './EnemyAIDifficulty';
   // AI System States
-  const [gameLoop, setGameLoop] = useState<GameLoop | null>(null);
+      const [gameLoaded, setGameLoaded] = useState(false);
+  const const [gameLoop, setGameLoop] = useState<GameLoop | null>(null);
   const [difficulty, setDifficulty] = useState<DifficultyLevel>(DifficultyLevel.MEDIUM);
   const [gameState, setGameState] = useState({
     running: true,
