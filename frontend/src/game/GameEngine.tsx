@@ -6,7 +6,7 @@ import {
   MeshBuilder,
   StandardMaterial,
   Color3,
-  Physics,
+  ArcRotateCamera,
 } from '@babylonjs/core';
 
 export class GameEngine {
@@ -32,6 +32,20 @@ export class GameEngine {
       this.scene = new Scene(this.engine);
       this.scene.collisionsEnabled = true;
 
+      // Create camera (ArcRotateCamera for 3D view)
+      const camera = new ArcRotateCamera(
+        'camera',
+        Math.PI / 2,
+        Math.PI / 2.5,
+        50,
+        new Vector3(0, 0, 0),
+        this.scene
+      );
+      camera.attachControl(this.canvas, true);
+      camera.checkCollisions = true;
+      camera.inertia = 0.7;
+      camera.speed = 0.02;
+
       // Add lighting
       const light = new HemisphericLight('light1', new Vector3(0, 1, 0), this.scene);
       light.intensity = 0.7;
@@ -42,14 +56,6 @@ export class GameEngine {
       groundMaterial.diffuse = new Color3(0.2, 0.7, 0.2);
       ground.material = groundMaterial;
       ground.checkCollisions = true;
-
-      // Setup camera
-      const camera = this.scene.activeCamera;
-      if (camera) {
-        camera.checkCollisions = true;
-        camera.inertia = 0.7;
-        camera.speed = 0.02;
-      }
 
       // Start render loop
       this.startRenderLoop();
