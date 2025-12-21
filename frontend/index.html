@@ -7,9 +7,26 @@
     <title>🥊 VITYAZ: Special Operations</title>
     <meta name="description" content="Tactical FPS with Play-to-Earn Crypto-Economics" />
     <meta name="theme-color" content="#8B0000" />
+    <script>
+      // PREVENT ANY OTHER SCRIPTS FROM MODIFYING ROOT
+      window._rootLocked = true;
+      Object.defineProperty(document.getElementById('root'), 'innerHTML', {
+        set: function(value) {
+          if (!window._reactIsLoading) return; // Allow React to set it
+        },
+        get: function() { return this._innerHTML || ''; }
+      });
+    </script>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      window._reactIsLoading = true;
+    </script>
+    <script type="module" src="/src/main.tsx"></ script>
+    <script>
+      // Lock after React loads
+      setTimeout(() => { window._reactIsLoading = false; }, 1000);
+    </script>
   </body>
 </html>
