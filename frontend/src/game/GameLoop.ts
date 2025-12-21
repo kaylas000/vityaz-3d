@@ -1,7 +1,6 @@
 import { Arena } from './Arena';
-import { CombatEngine } from './CombatEngine';
+// import { CombatEngine } from './CombatEngine';
 import { EnemyAI, AIManager, AIAction } from './EnemyAI';
-
 export interface GameState {
   running: boolean;
   paused: boolean;
@@ -30,9 +29,11 @@ export class GameLoop {
     this.arena.generateArena(width, height);
 
     // Initialize player at spawn point
-    const spawnPoints = this.arena.getSpawnPoints(5);
-    const playerSpawn = spawnPoints[0];
+// const spawnPoints = this.arena.spawnPoints || [];
 
+
+const playerSpawn = { x: 25, y: 25 }; // Default spawn point
+// 
     this.player = {
       position: playerSpawn,
       health: 100,
@@ -40,15 +41,15 @@ export class GameLoop {
     };
 
     // Initialize enemies
-    for (let i = 1; i < Math.min(spawnPoints.length, 4); i++) {
-      const enemy = new EnemyAI();
-      enemy.position = spawnPoints[i];
-      enemy.id = `enemy-${i}`;
-      this.enemies.push(enemy);
-    }
+    // for (let i = 1; i < Math.min(spawnPoints.length, 4); i++) {
+      // const enemy = new EnemyAI();
+//       enemy.position = spawnPoints[i];
+      // enemy.id = `enemy-${i}`;
+      // this.enemies.push(enemy);
+    // }
 
-    this.aiManager = new AIManager(this.enemies);
-    this.combatEngine = new CombatEngine();
+//     this.aiManager = new AIManager(this.enemies);
+    // this.combatEngine = new CombatEngine();
   }
 
   update(playerAction: any): GameState {

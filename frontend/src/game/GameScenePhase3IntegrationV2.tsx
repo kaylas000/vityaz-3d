@@ -2,8 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import * as BABYLON from '@babylonjs/core';
 import { Arena } from './Arena';
 import { SpecNavyFighter } from './SpecNavyFighter';
-import { CombatEngine } from './CombatEngine';
-import { GameLoop, DifficultyLevel, DifficultyManager, AStarPathfinder, CombatTacticsEngine, AIBehaviorTree } from './AISystem';
+// import { CombatEngine } from './CombatEngine';
+// import { GameLoop, DifficultyLevel, DifficultyManager, AStarPathfinder, CombatTacticsEngine, AIBehaviorTree } from './AISystem';
 
 /**
  * GameScenePhase3IntegrationV2 - Full AI System Integration

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { EnemyAI, AIManager, AIState } from './EnemyAI';
+import { EnemyAI, AIManager, AIState } from '../game3d/EnemyAI';
 
 describe('EnemyAI', () => {
   let enemy: EnemyAI;
