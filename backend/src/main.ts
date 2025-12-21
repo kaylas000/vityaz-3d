@@ -1,72 +1,32 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
-import { LoggerService } from './common/logger/logger.service';
-import * as compression from 'compression';
-import helmet from 'helmet';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import * as cors from 'cors';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    logger: new LoggerService(),
-  });
+  const app = await NestFactory.create(AppModule);
 
-  // Security
-  app.use(helmet());
-  app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-    credentials: true,
-  });
+  // Enable CORS
+  app.use(cors());
 
-  // Compression
-  app.use(compression());
-
-  // Global prefix
-  app.setGlobalPrefix(process.env.API_PREFIX || '/api/v1');
-
-  // Validation
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-      transformOptions: {
-        enableImplicitConversion: true,
-      },
-    }),
-  );
-
-  // Exception filter
-  app.useGlobalFilters(new GlobalExceptionFilter());
-
-  // Swagger documentation
+  // API documentation
   const config = new DocumentBuilder()
     .setTitle('VITYAZ API')
-    .setDescription('VITYAZ: Special Operations - Game API Documentation')
+    .setDescription('VITYAZ: Special Operations - Backend API')
     .setVersion('0.1.0')
     .addBearerAuth()
-    .addTag('auth', 'Authentication endpoints')
-    .addTag('users', 'User management')
-    .addTag('battles', 'Battle system')
-    .addTag('economy', 'Token economy')
-    .addTag('nft', 'NFT system')
-    .addTag('staking', 'Staking system')
-    .addTag('tournaments', 'Tournament system')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document);
+  SwaggerModule.setup('api/docs', app, document);
 
-  const port = process.env.API_PORT || 3001;
-  await app.listen(port);
-
-  const logger = new LoggerService();
-  logger.log(`🚀 VITYAZ API running on: http://localhost:${port}`, 'Bootstrap');
-  logger.log(`📚 API Documentation: http://localhost:${port}/docs`, 'Bootstrap');
-  logger.log(`🔧 Environment: ${process.env.NODE_ENV}`, 'Bootstrap');
-  logger.log(`🗄️ Database: Connected`, 'Bootstrap');
-  logger.log(`📡 Redis: Connected`, 'Bootstrap');
+  const PORT = process.env.PORT || 3000;
+  await app.listen(PORT);
+  console.log(`✅ VITYAZ Backend listening on port ${PORT}`);
+  console.log(`📚 API Docs: http://localhost:${PORT}/api/docs`);
 }
 
-bootstrap();
+bootstrap().catch((err) => {
+  console.error('❌ Failed to start server:', err);
+  process.exit(1);
+});
