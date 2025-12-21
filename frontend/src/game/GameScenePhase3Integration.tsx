@@ -1,4 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
+
+import { GameLoop, DifficultyLevel, DifficultyManager, AStarPathfinder, CombatTacticsEngine } from './AISystem';
+
 import * as BABYLON from '@babylonjs/core';
 import { Arena } from './Arena';
 import { SpecNavyFighter } from './SpecNavyFighter';
