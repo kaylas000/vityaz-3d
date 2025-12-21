@@ -915,4 +915,347 @@ Everything else depends on having real blockchain integration working.
 
 ---
 
-**If you complete all Phase 1 items this week, you'll be 25% closer to mainnet launch.** 🚀
+el: number;**If you complete all 
+Phase 1 items this week, you'll 
+be 25% closer to mainnet 
+launch.** 🚀
+  exp: number; totalEarned: 
+  number; // всего заработано 
+  totalSpent: number; // всего 
+  трато victories: number; 
+  defeats: number;
+}
+export interface 
+TransactionRecord {
+  id: string; playerId: string; 
+  type: 'earn' | 'spend' | 
+  'transfer'; amount: number; 
+  currency: 'coins' | 'tokens'; 
+  reason: string; timestamp: 
+  number;
+}
+export class GameEconomySystem { 
+  private playerEconomies: 
+  Map<string, PlayerEconomy> = 
+  new Map(); private 
+  transactions: 
+  TransactionRecord[] = [];
+  // Основные коэффициенты
+  private readonly 
+  VICTORY_REWARD = 500; // коины 
+  на победу private readonly 
+  DEFEAT_PENALTY = 50; // штраф 
+  на поражение private readonly 
+  FIGHT_ENTRY = 10; // стоимость 
+  боя private readonly 
+  TOKEN_EXCHANGE_RATE = 0.001; 
+  // 1 коин = 0.001 TON 
+  // Инициализация экономики 
+  // игрока
+  initializePlayer(playerId: 
+  string): PlayerEconomy {
+    const economy: PlayerEconomy 
+    = {
+      playerId, gameCoins: 1000, 
+      // стартовая сумма
+      tokenBalance: 0, level: 1, 
+      exp: 0, totalEarned: 1000, 
+      totalSpent: 0, victories: 
+      0, defeats: 0,
+    };
+    this.playerEconomies.set(playerId, 
+    economy); return economy;
+  }
+  // Получить экономику игрока
+  getPlayerEconomy(playerId: 
+  string): PlayerEconomy | 
+  undefined {
+    return 
+    this.playerEconomies.get(playerId);
+  }
+  // Начисление награды за 
+  // победу
+  recordVictory(playerId: 
+  string, multiplier: number = 
+  1.0): void {
+    const economy = 
+    this.playerEconomies.get(playerId); 
+    if (!economy) return; const 
+    reward = 
+    Math.floor(this.VICTORY_REWARD 
+    * multiplier); 
+    economy.gameCoins += reward; 
+    economy.totalEarned += 
+    reward; economy.victories += 
+    1; economy.exp += 100; 
+    this.addTransaction({
+      id: 
+      `tx_${Date.now()}_${Math.random()}`, 
+      playerId, type: 'earn', 
+      amount: reward, currency: 
+      'coins', reason: 
+      'victory', timestamp: 
+      Date.now(),
+    });
+    this.checkLevelUp(playerId);
+  }
+  // Поражение
+  recordDefeat(playerId: 
+  string): void {
+    const economy = this.playerEconomies.get(playerId);
+    if (!economy) return;
+
+    economy.gameCoins = Math.max(0, economy.gameCoins - this.DEFEAT_PENALTY);
+    economy.totalSpent += this.DEFEAT_PENALTY;
+    economy.defeats += 1;
+
+    this.addTransaction({
+      id: `tx_${Date.now()}_${Math.random()}`,
+      playerId,
+      type: 'spend',
+      amount: this.DEFEAT_PENALTY,
+      currency: 'coins',
+      reason: 'defeat',
+      timestamp: Date.now(),
+    });
+  }
+
+  // Оплата боя
+  payForFight(playerId: string): boolean {
+    const economy = this.playerEconomies.get(playerId);
+    if (!economy || economy.gameCoins < this.FIGHT_ENTRY) {
+      return false;
+    }
+
+    economy.gameCoins -= this.FIGHT_ENTRY;
+    economy.totalSpent += this.FIGHT_ENTRY;
+
+    this.addTransaction({
+      id: `tx_${Date.now()}_${Math.random()}`,
+      playerId,
+      type: 'spend',
+      amount: this.FIGHT_ENTRY,
+      currency: 'coins',
+      reason: 'fight_entry',
+      timestamp: Date.now(),
+    });
+
+    return true;
+  }
+
+  // Новый уровень
+  private checkLevelUp(playerId: string): void {
+    const economy = this.playerEconomies.get(playerId);
+    if (!economy) return;
+
+    const requiredExp = economy.level * 500; // Опыт нужен на следующий уровень
+    
+    if (economy.exp >= requiredExp) {
+      economy.level += 1;
+      economy.exp = 0;
+      
+      // Бонус за повышение уровня
+      const levelUpBonus = 100 * economy.level;
+      economy.gameCoins += levelUpBonus;
+      economy.totalEarned += levelUpBonus;
+    }
+  }
+
+  // Обмен коинок на токены
+  exchangeCoinsForTokens(playerId: string, coinAmount: number): boolean {
+    const economy = this.playerEconomies.get(playerId);
+    if (!economy || economy.gameCoins < coinAmount) {
+      return false;
+    }
+
+    const tokens = coinAmount * this.TOKEN_EXCHANGE_RATE;
+    economy.gameCoins -= coinAmount;
+    economy.tokenBalance += tokens;
+    economy.totalSpent += coinAmount;
+
+    this.addTransaction({
+      id: `tx_${Date.now()}_${Math.random()}`,
+      playerId,
+      type: 'transfer',
+      amount: tokens,
+      currency: 'tokens',
+      reason: 'exchange',
+      timestamp: Date.now(),
+    });
+
+    return true;
+  }
+
+  // Добавление транзакции в историю
+  private addTransaction(record: TransactionRecord): void {
+    this.transactions.push(record);
+  }
+
+  // Получить историю транзакций
+  getTransactionHistory(playerId: string): TransactionRecord[] {
+    return this.transactions.filter(tx => tx.playerId === playerId);
+  }
+
+  // статистика игрока
+  getPlayerStats(playerId: string) {
+    const economy = this.playerEconomies.get(playerId);
+    if (!economy) return null;
+
+    const winRate = economy.victories + economy.defeats > 0 
+      ? (economy.victories / (economy.victories + economy.defeats) * 100).toFixed(2) 
+      : '0.00';
+
+    return {
+      ...economy,
+      winRate: parseFloat(winRate),
+      avgEarningsPerFight: economy.victories > 0 
+        ? (economy.totalEarned / economy.victories).toFixed(2) 
+        : '0.00',
+    };
+  }
+}
+
+export const gameEconomy = new 
+GameEconomySystem(); EOF el: 
+number;
+  totalWins: number; 
+  totalLosses: number; 
+  tokenRewards: number; // TON 
+  токены experience: number;
+  lastUpdated: number;
+  trophies: number; // Набранные кубки
+  region?: string; // не требуется для глобального рейтинга
+}
+
+export class LeaderboardSystem {
+  private globalLeaderboard: Map<string, LeaderboardEntry> = new Map();
+  private updateInterval: NodeJS.Timeout | null = null;
+
+  constructor() {
+    this.startAutoUpdate();
+  }
+
+  // Добавление игрока в рейтинг
+  addPlayer(playerId: string, playerName: string): void {
+    const entry: LeaderboardEntry = {
+      rank: this.globalLeaderboard.size + 1,
+      playerId,
+      playerName,
+      level: 1,
+      totalWins: 0,
+      totalLosses: 0,
+      tokenRewards: 0,
+      experience: 0,
+      lastUpdated: Date.now(),
+      trophies: 0,
+    };
+
+    this.globalLeaderboard.set(playerId, entry);
+  }
+
+  // Обновление статистики игрока
+  updatePlayerStats(playerId: string, stats: {
+    level?: number;
+    wins?: number;
+    losses?: number;
+    tokens?: number;
+    exp?: number;
+    trophies?: number;
+  }): void {
+    const entry = this.globalLeaderboard.get(playerId);
+    if (!entry) return;
+
+    if (stats.level !== undefined) entry.level = stats.level;
+    if (stats.wins !== undefined) entry.totalWins = stats.wins;
+    if (stats.losses !== undefined) entry.totalLosses = stats.losses;
+    if (stats.tokens !== undefined) entry.tokenRewards = stats.tokens;
+    if (stats.exp !== undefined) entry.experience = stats.exp;
+    if (stats.trophies !== undefined) entry.trophies = stats.trophies;
+    
+    entry.lastUpdated = Date.now();
+  }
+
+  // Отсортировать и вернуть Top N
+  getTopPlayers(limit: number = 100): LeaderboardEntry[] {
+    const sorted = Array.from(this.globalLeaderboard.values())
+      .sort((a, b) => {
+        // Основные критерии сортировки
+        if (b.level !== a.level) return b.level - a.level; // Лидеры интересуют летом
+        if (b.trophies !== a.trophies) return b.trophies - a.trophies; // Не теряют кубки
+        if (b.tokenRewards !== a.tokenRewards) return b.tokenRewards - a.tokenRewards;
+        return b.totalWins - a.totalWins;
+      })
+      .slice(0, limit);
+
+    // Обновить ранги
+    sorted.forEach((entry, index) => {
+      entry.rank = index + 1;
+    });
+
+    return sorted;
+  }
+
+  // Пойск лы одного игрока
+  getPlayerRank(playerId: string): LeaderboardEntry | undefined {
+    return this.globalLeaderboard.get(playerId);
+  }
+
+  // Отравить топ 10 для дисплея
+  getTopTen(): LeaderboardEntry[] {
+    return this.getTopPlayers(10);
+  }
+
+  // Отравить Около игрока
+  getPlayerContext(playerId: string, contextSize: number = 5): LeaderboardEntry[] {
+    const top = this.getTopPlayers(1000);
+    const playerIndex = top.findIndex(p => p.playerId === playerId);
+    
+    if (playerIndex === -1) return [];
+
+    const start = Math.max(0, playerIndex - contextSize);
+    const end = Math.min(top.length, playerIndex + contextSize + 1);
+    
+    return top.slice(start, end);
+  }
+
+  // Автоматическая обновление (каждые 5 минут)
+  private startAutoUpdate(): void {
+    this.updateInterval = setInterval(() => {
+      console.log(`[Leaderboard] Updated at ${new Date().toISOString()}`);
+    }, 5 * 60 * 1000);
+  }
+
+  // Централизованные данные для ревайндов
+  getDailyRewards(): Array<{rank: number, reward: number}> {
+    const top = this.getTopPlayers(100);
+    const rewards = [];
+    
+    // топ 1-3: 1000 tokens
+    for (let i = 0; i < Math.min(3, top.length); i++) {
+      rewards.push({rank: top[i].rank, reward: 1000});
+    }
+    
+    // топ 4-10: 500 tokens
+    for (let i = 3; i < Math.min(10, top.length); i++) {
+      rewards.push({rank: top[i].rank, reward: 500});
+    }
+    
+    // топ 11-100: 50 tokens
+    for (let i = 10; i < Math.min(100, top.length); i++) {
+      rewards.push({rank: top[i].rank, reward: 50});
+    }
+
+    return rewards;
+  }
+
+  // Остановка автообновления
+  destroy(): void {
+    if (this.updateInterval) {
+      clearInterval(this.updateInterval);
+    }
+  }
+}
+
+export const leaderboard = new LeaderboardSystem();
+EOF
+
