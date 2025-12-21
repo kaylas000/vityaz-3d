@@ -35,18 +35,21 @@ export const GamePage: React.FC<GamePageProps> = ({ playerName, difficulty, onEx
         const ground = babylon.MeshBuilder.CreateGround('ground', { width: 100, height: 100 }, scene);
         const gmat = new babylon.StandardMaterial('gmat', scene);
         gmat.diffuse = new babylon.Color3(0.2, 0.7, 0.2);
+        gmat.emissiveColor = new babylon.Color3(0.1, 0.3, 0.1);
         ground.material = gmat;
 
         const player = babylon.MeshBuilder.CreateBox('player', { size: 2 }, scene);
         player.position.y = 2;
         const pmat = new babylon.StandardMaterial('pmat', scene);
         pmat.diffuse = new babylon.Color3(0, 0.5, 1);
+        pmat.emissiveColor = new babylon.Color3(0, 0.5, 1);
         player.material = pmat;
 
         const enemy = babylon.MeshBuilder.CreateBox('enemy', { size: 1.5 }, scene);
         enemy.position.set(10, 1, 10);
         const emat = new babylon.StandardMaterial('emat', scene);
         emat.diffuse = new babylon.Color3(1, 0, 0);
+        emat.emissiveColor = new babylon.Color3(1, 0, 0);
         enemy.material = emat;
 
         const keys: { [key: string]: boolean } = {};
@@ -63,17 +66,18 @@ export const GamePage: React.FC<GamePageProps> = ({ playerName, difficulty, onEx
           const dt = (now - lastTime) / 1000;
           lastTime = now;
 
-          const speed = 0.5;
+          const speed = 20; // FASTER!
           if (keys['w'] || keys['arrowup']) player.position.z += speed * dt;
           if (keys['s'] || keys['arrowdown']) player.position.z -= speed * dt;
           if (keys['a'] || keys['arrowleft']) player.position.x -= speed * dt;
           if (keys['d'] || keys['arrowright']) player.position.x += speed * dt;
 
-          const dir = player.position.subtract(enemy.position);
+          // Enemy AI - chase player
+          const dirToPlayer = player.position.subtract(enemy.position);
           const dist = babylon.Vector3.Distance(player.position, enemy.position);
           if (dist > 2) {
-            const normalized = dir.normalize();
-            enemy.position.addInPlace(normalized.scale(0.1 * dt));
+            const normalized = dirToPlayer.normalize();
+            enemy.position.addInPlace(normalized.scale(8 * dt)); // FASTER!
           }
 
           scene.render();
@@ -96,6 +100,7 @@ export const GamePage: React.FC<GamePageProps> = ({ playerName, difficulty, onEx
           <p>🎮 Player: {playerName}</p>
           <p>🌟 Difficulty: {difficulty.toUpperCase()}</p>
           <p>🍗 Status: {gameReady ? '✓ Ready' : '⏳ Loading'}</p>
+          <p style={{ marginTop: '10px', fontSize: '12px', color: '#00ff00' }}>WASD или стрелки для движения</p>
         </div>
         <button style={styles.exitButton} onClick={onExit}>
           EXIT GAME
