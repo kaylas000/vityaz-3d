@@ -152,6 +152,7 @@ export const GameScenePhase3IntegrationV2 = () => {
       engine.resize();
     });
 
+        setGameLoaded(true);
     return () => {
       clearInterval(gameUpdateInterval);
       engine.dispose();
