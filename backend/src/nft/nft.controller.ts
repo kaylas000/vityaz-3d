@@ -9,7 +9,7 @@ export class NFTController {
   constructor(private nftService: NFTService) {}
 
   @Get('inventory')
-  async getInventory(@CurrentUser() user: any) {
+  async getInventory(@CurrentUser() user: any): Promise<any> {
     return this.nftService.getInventory(user.id)
   }
 
@@ -17,7 +17,7 @@ export class NFTController {
   async mintNFT(
     @CurrentUser() user: any,
     @Body() body: { type: string; name: string; rarity: string },
-  ) {
+  ): Promise<any> {
     return this.nftService.mintNFT(user.id, body.type as any, body.name, body.rarity as any)
   }
 
@@ -25,7 +25,7 @@ export class NFTController {
   async listNFT(
     @CurrentUser() user: any,
     @Body() body: { price: number },
-  ) {
+  ): Promise<any> {
     // Verify ownership
     const inventory = await this.nftService.getInventory(user.id)
     const nft = inventory.find((n) => n.id === body)
@@ -36,13 +36,13 @@ export class NFTController {
   }
 
   @Post('buy/:listingId')
-  async buyNFT(@CurrentUser() user: any) {
+  async buyNFT(@CurrentUser() user: any): Promise<any> {
     // Buy NFT from marketplace
     return { success: true }
   }
 
   @Get('marketplace')
-  async getMarketplace() {
+  async getMarketplace(): Promise<any> {
     return this.nftService.getMarketplace()
   }
 }
