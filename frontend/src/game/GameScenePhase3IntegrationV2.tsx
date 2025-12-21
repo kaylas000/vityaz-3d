@@ -2,8 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import * as BABYLON from '@babylonjs/core';
 import { Arena } from './Arena';
 import { SpecNavyFighter } from './SpecNavyFighter';
-// import { CombatEngine } from './CombatEngine';
-// import { GameLoop, DifficultyLevel, DifficultyManager, AStarPathfinder, CombatTacticsEngine, AIBehaviorTree } from './AISystem';
+import { CombatEngine } from './CombatEngine';
+import { GameLoop, DifficultyLevel, DifficultyManager, AStarPathfinder, CombatTacticsEngine, AIBehaviorTree } from './AISystem';
 
 /**
  * GameScenePhase3IntegrationV2 - Full AI System Integration
@@ -79,7 +79,7 @@ export const GameScenePhase3IntegrationV2 = () => {
     // Create Player Mesh
     const playerMesh = BABYLON.MeshBuilder.CreateBox('player', { size: 1 }, scene);
     playerMesh.material = new BABYLON.StandardMaterial('playerMat', scene);
-    (playerMesh.material as BABYLON.StandardMaterial).diffuse = BABYLON.Color3.Blue();
+          (playerMesh.material as any).diffuse = BABYLON.Color3.Blue();
     playerMeshRef.current = playerMesh;
 
     // Initialize AI Systems
@@ -94,10 +94,10 @@ export const GameScenePhase3IntegrationV2 = () => {
     // Create Enemy Meshes
     const enemies = loop.getEnemies();
     const newEnemyMeshes: BABYLON.Mesh[] = [];
-    enemies.forEach((enemy, idx) => {
+        enemies.forEach((enemy: any, idx: number) => {
       const enemyMesh = BABYLON.MeshBuilder.CreateBox(`enemy${idx}`, { size: 0.8 }, scene);
       enemyMesh.material = new BABYLON.StandardMaterial(`enemyMat${idx}`, scene);
-      (enemyMesh.material as BABYLON.StandardMaterial).diffuse = BABYLON.Color3.Red();
+            (enemyMesh.material as any).diffuse = BABYLON.Color3.Red();
       newEnemyMeshes.push(enemyMesh);
     });
     enemyMeshesRef.current = newEnemyMeshes;
@@ -122,7 +122,7 @@ export const GameScenePhase3IntegrationV2 = () => {
         );
       }
 
-      gameEnemies.forEach((enemy, idx) => {
+          gameEnemies.forEach((enemy: any, idx: number) => {
         if (enemyMeshesRef.current[idx]) {
           enemyMeshesRef.current[idx].position = new BABYLON.Vector3(
             enemy.position.x,
