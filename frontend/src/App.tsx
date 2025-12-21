@@ -1,11 +1,12 @@
 import React from 'react';
+import { GameScene } from './components/GameScene';
 
 export default function App() {
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial' }}>
-      <h1>🥊 VITYAZ: Special Operations</h1>
-      <p>Game is loading...</p>
-      <p>Status: React is working!</p>
-    </div>
+    <GameScene
+      playerName="Player"
+      onGameReady={() => console.log('Game is ready!')}
+      onError={(error) => console.error('Game error:', error)}
+    />
   );
 }
