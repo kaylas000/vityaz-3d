@@ -1,45 +1,50 @@
-import * as BABYLON from 'babylon.js'
-import { GAME_CONFIG, COLORS } from '../utils/constants'
-import Player from '../entities/Player'
-import Enemy from '../entities/Enemy'
-import Projectile from '../entities/Projectile'
-import GameHUD from '../ui/GameHUD'
+import * as BABYLON from '@babylonjs/core';
+import '@babylonjs/loaders';
+import { GAME_CONFIG, COLORS } from '../utils/constants';
+import Player from '../entities/Player';
+import Enemy from '../entities/Enemy';
+import Projectile from '../entities/Projectile';
+import GameHUD from '../ui/GameHUD';
 
+/**
+ * GameScene3D - Main 3D game scene with Babylon.js
+ * Handles game logic, rendering, and entity management
+ */
 export default class GameScene3D {
   // Babylon components
-  scene: BABYLON.Scene
-  engine: BABYLON.Engine
-  canvas: HTMLCanvasElement
-  camera: BABYLON.UniversalCamera | null = null
+  scene: BABYLON.Scene;
+  engine: BABYLON.Engine;
+  canvas: HTMLCanvasElement;
+  camera: BABYLON.UniversalCamera | null = null;
 
   // Game entities
-  player: Player | null = null
-  enemies: Enemy[] = []
-  projectiles: Projectile[] = []
-  hud: GameHUD | null = null
+  player: Player | null = null;
+  enemies: Enemy[] = [];
+  projectiles: Projectile[] = [];
+  hud: GameHUD | null = null;
 
   // Game state
-  wave: number = 1
-  score: number = 0
-  gameActive: boolean = true
-  lastFrameTime: number = Date.now()
+  wave: number = 1;
+  score: number = 0;
+  gameActive: boolean = true;
+  lastFrameTime: number = Date.now();
 
   // Input handling
-  inputMap: { [key: string]: boolean } = {}
-  mousePos: { x: number; y: number } = { x: 0, y: 0 }
-  lastShootTime: number = 0
+  inputMap: { [key: string]: boolean } = {};
+  mousePos: { x: number; y: number } = { x: 0, y: 0 };
+  lastShootTime: number = 0;
 
   constructor(canvas: HTMLCanvasElement, engine: BABYLON.Engine) {
-    this.canvas = canvas
-    this.engine = engine
-    this.scene = new BABYLON.Scene(engine)
+    this.canvas = canvas;
+    this.engine = engine;
+    this.scene = new BABYLON.Scene(engine);
 
     // Initialize all components synchronously
-    this.setupScene()
-    this.setupInput()
-    this.startGameLoop()
+    this.setupScene();
+    this.setupInput();
+    this.startGameLoop();
 
-    console.log('✅ GameScene3D initialized')
+    console.log('✅ GameScene3D initialized');
   }
 
   /**
@@ -51,56 +56,56 @@ export default class GameScene3D {
       'light',
       new BABYLON.Vector3(1, 1, 1),
       this.scene
-    )
-    light.intensity = 0.7
+    );
+    light.intensity = 0.7;
 
     // Sky (simple large cube)
-    const skybox = BABYLON.MeshBuilder.CreateBox('skybox', { size: 1000 }, this.scene)
-    const skyMaterial = new BABYLON.StandardMaterial('skyMat', this.scene)
+    const skybox = BABYLON.MeshBuilder.CreateBox('skybox', { size: 1000 }, this.scene);
+    const skyMaterial = new BABYLON.StandardMaterial('skyMat', this.scene);
     skyMaterial.emissiveColor = new BABYLON.Color3(
       COLORS.SKY.r,
       COLORS.SKY.g,
       COLORS.SKY.b
-    )
-    skybox.material = skyMaterial
+    );
+    skybox.material = skyMaterial;
 
     // Ground
     const ground = BABYLON.MeshBuilder.CreateGround(
       'ground',
       { width: 200, height: 200 },
       this.scene
-    )
-    const groundMat = new BABYLON.StandardMaterial('groundMat', this.scene)
+    );
+    const groundMat = new BABYLON.StandardMaterial('groundMat', this.scene);
     groundMat.emissiveColor = new BABYLON.Color3(
       COLORS.GROUND.r,
       COLORS.GROUND.g,
       COLORS.GROUND.b
-    )
-    ground.material = groundMat
+    );
+    ground.material = groundMat;
 
     // Camera (FPS style with mouse look)
     this.camera = new BABYLON.UniversalCamera(
       'camera',
       new BABYLON.Vector3(0, 2, -10),
       this.scene
-    )
-    this.camera.attachControl(this.canvas, true)
-    this.camera.inertia = 0.7
-    this.camera.angularSensibility = 1000
+    );
+    this.camera.attachControl(this.canvas, true);
+    this.camera.inertia = 0.7;
+    this.camera.angularSensibility = 1000;
 
     // Create player
-    this.player = new Player(this.scene, GAME_CONFIG.PLAYER_START_POS)
+    this.player = new Player(this.scene, GAME_CONFIG.PLAYER_START_POS);
 
     // Create HUD
-    this.hud = new GameHUD(this.scene)
+    this.hud = new GameHUD(this.scene);
     if (this.player) {
-      this.hud.updateHealth(this.player.health, this.player.maxHealth)
+      this.hud.updateHealth(this.player.health, this.player.maxHealth);
     }
-    this.hud.updateScore(this.score)
-    this.hud.updateWave(this.wave)
+    this.hud.updateScore(this.score);
+    this.hud.updateWave(this.wave);
 
     // Spawn initial enemies
-    this.spawnWave(this.wave)
+    this.spawnWave(this.wave);
   }
 
   /**
@@ -109,14 +114,14 @@ export default class GameScene3D {
   private setupInput() {
     // Keyboard input (WASD, Space, etc.)
     this.scene.onKeyboardObservable.add((kbInfo) => {
-      const key = kbInfo.event.key.toUpperCase()
+      const key = kbInfo.event.key.toUpperCase();
 
       if (kbInfo.type === BABYLON.KeyboardEventTypes.KEYDOWN) {
-        this.inputMap[key] = true
+        this.inputMap[key] = true;
       } else if (kbInfo.type === BABYLON.KeyboardEventTypes.KEYUP) {
-        this.inputMap[key] = false
+        this.inputMap[key] = false;
       }
-    })
+    });
 
     // Mouse input (camera look + shooting)
     this.scene.onPointerObservable.add((pointerInfo) => {
@@ -124,13 +129,13 @@ export default class GameScene3D {
         this.mousePos = {
           x: pointerInfo.event.clientX,
           y: pointerInfo.event.clientY,
-        }
+        };
       }
 
       if (pointerInfo.type === BABYLON.PointerEventTypes.POINTERDOWN) {
-        this.shoot()
+        this.shoot();
       }
-    })
+    });
   }
 
   /**
@@ -139,113 +144,111 @@ export default class GameScene3D {
   private startGameLoop() {
     this.engine.runRenderLoop(() => {
       if (this.gameActive) {
-        this.update()
+        this.update();
       }
-      this.scene.render()
-    })
+      this.scene.render();
+    });
   }
 
   /**
    * Main update loop (called every frame)
    */
   private update() {
-    const now = Date.now()
-    const deltaTime = now - this.lastFrameTime
-    this.lastFrameTime = now
+    const now = Date.now();
+    const deltaTime = now - this.lastFrameTime;
+    this.lastFrameTime = now;
 
-    // FIXED: Update player with deltaTime
+    // Update player with deltaTime
     if (this.player) {
-      this.player.update(this.inputMap, deltaTime)
+      this.player.update(this.inputMap, deltaTime);
 
       // Move camera to follow player
       if (this.camera) {
         this.camera.position = this.player.mesh.position.add(
           new BABYLON.Vector3(0, 1.5, 0)
-        )
+        );
       }
     }
 
     // Update enemies (with deltaTime for consistent movement)
     if (this.player) {
       this.enemies.forEach((enemy) => {
-        enemy.update(this.player!.mesh.position, deltaTime)
-      })
+        enemy.update(this.player!.mesh.position, deltaTime);
+      });
     }
 
     // Update projectiles
-    this.projectiles = this.projectiles.filter((p) => p.update(deltaTime))
+    this.projectiles = this.projectiles.filter((p) => p.update(deltaTime));
 
     // Check collisions
-    this.checkCollisions()
+    this.checkCollisions();
 
     // Wave management: spawn next wave when all enemies are defeated
-    if (this.enemies.length === 0) {
-      this.wave++
-      this.spawnWave(this.wave)
+    if (this.enemies.length === 0 && this.gameActive) {
+      this.wave++;
+      this.spawnWave(this.wave);
     }
 
     // Check game over condition
     if (this.player && this.player.health <= 0) {
-      this.gameOver()
+      this.gameOver();
     }
 
     // Update HUD
     if (this.hud && this.player) {
-      this.hud.updateHealth(this.player.health, this.player.maxHealth)
-      this.hud.updateScore(this.score)
-      this.hud.updateWave(this.wave)
+      this.hud.updateHealth(this.player.health, this.player.maxHealth);
+      this.hud.updateScore(this.score);
+      this.hud.updateWave(this.wave);
     }
   }
 
   /**
-   * FIXED: Collision detection with corrected distance (1.0) and attack cooldown
+   * Collision detection with corrected distance and attack cooldown
    */
   private checkCollisions() {
     // Projectiles vs Enemies
     for (let i = this.projectiles.length - 1; i >= 0; i--) {
-      const projectile = this.projectiles[i]
+      const projectile = this.projectiles[i];
 
       for (let j = this.enemies.length - 1; j >= 0; j--) {
-        const enemy = this.enemies[j]
+        const enemy = this.enemies[j];
 
         const distance = BABYLON.Vector3.Distance(
           projectile.mesh.position,
           enemy.mesh.position
-        )
+        );
 
-        // FIXED: Changed from 1.5 to 1.0 for better accuracy
         if (distance < GAME_CONFIG.COLLISION_DISTANCE) {
-          enemy.takeDamage(projectile.damage)
-          projectile.dispose()
-          this.projectiles.splice(i, 1)
+          enemy.takeDamage(projectile.damage);
+          projectile.dispose();
+          this.projectiles.splice(i, 1);
 
           if (enemy.health <= 0) {
-            enemy.dispose()
-            this.enemies.splice(j, 1)
-            this.score += enemy.type === 'tank' ? 200 : 100
+            enemy.dispose();
+            this.enemies.splice(j, 1);
+            this.score += enemy.type === 'tank' ? 200 : 100;
           }
-          break
+          break;
         }
       }
     }
 
-    // FIXED: Enemies vs Player with attack cooldown (prevent spam damage)
+    // Enemies vs Player with attack cooldown
     if (this.player) {
-      const now = Date.now()
+      const now = Date.now();
 
       for (const enemy of this.enemies) {
         const distance = BABYLON.Vector3.Distance(
           enemy.mesh.position,
           this.player.mesh.position
-        )
+        );
 
         // Player gets hit if enemy gets too close
         if (distance < GAME_CONFIG.COLLISION_DISTANCE) {
-          // FIXED: Check cooldown before applying damage
-          if (now - enemy.lastHitTime > GAME_CONFIG.ENEMY_ATTACK_COOLDOWN) {
-            this.player.takeDamage(enemy.damage)
-            enemy.lastHitTime = now
-            console.log('💥 Player hit by enemy!')
+          if (now - (enemy as any).lastHitTime > GAME_CONFIG.ENEMY_ATTACK_COOLDOWN) {
+            this.player.takeDamage(enemy.damage);
+            (enemy as any).lastHitTime = now;
+            console.log('💥 Player hit by enemy!');
           }
         }
       }
@@ -257,57 +260,56 @@ export default class GameScene3D {
    * Difficulty increases with each wave
    */
   private spawnWave(waveNumber: number) {
-    const count = GAME_CONFIG.INITIAL_ENEMIES_PER_WAVE + Math.floor(waveNumber / 2)
+    const count = GAME_CONFIG.INITIAL_ENEMIES_PER_WAVE + Math.floor(waveNumber / 2);
 
     for (let i = 0; i < count; i++) {
-      const angle = (i / count) * Math.PI * 2
+      const angle = (i / count) * Math.PI * 2;
       const pos = new BABYLON.Vector3(
         Math.cos(angle) * GAME_CONFIG.ENEMY_SPAWN_DISTANCE,
         1,
         Math.sin(angle) * GAME_CONFIG.ENEMY_SPAWN_DISTANCE
-      )
+      );
 
       // Introduce tank enemies from wave 2 onwards
-      const type = i === 0 && waveNumber > 1 ? 'tank' : 'basic'
-      this.enemies.push(new Enemy(this.scene, pos, type))
+      const type = i === 0 && waveNumber > 1 ? 'tank' : 'basic';
+      this.enemies.push(new Enemy(this.scene, pos, type));
     }
 
-    console.log(`🌊 Wave ${waveNumber} spawned (${this.enemies.length} enemies)`)
+    console.log(`🌊 Wave ${waveNumber} spawned (${this.enemies.length} enemies)`);
   }
 
   /**
    * Shoot projectile from camera forward direction
-   * Uses shoot cooldown to prevent spam
    */
   private shoot() {
-    const now = Date.now()
-    if (now - this.lastShootTime < GAME_CONFIG.SHOOT_COOLDOWN) return
-    if (!this.camera || !this.player) return
+    const now = Date.now();
+    if (now - this.lastShootTime < GAME_CONFIG.SHOOT_COOLDOWN) return;
+    if (!this.camera || !this.player) return;
 
-    this.lastShootTime = now
+    this.lastShootTime = now;
 
-    const startPos = this.camera.position.clone()
+    const startPos = this.camera.position.clone();
     const direction = BABYLON.Vector3.Forward().applyRotationQuaternionInPlace(
       this.camera.absoluteRotation
-    )
+    );
 
-    const projectile = new Projectile(this.scene, startPos, direction)
-    this.projectiles.push(projectile)
+    const projectile = new Projectile(this.scene, startPos, direction);
+    this.projectiles.push(projectile);
 
-    console.log('🔫 Shot fired!')
+    console.log('🔫 Shot fired!');
   }
 
   /**
-   * Handle game over: stop updates, show stats
+   * Handle game over
    */
   private gameOver() {
-    this.gameActive = false
-    console.log('💠 GAME OVER!')
-    console.log(`Final Score: ${this.score}`)
-    console.log(`Waves Survived: ${this.wave}`)
+    this.gameActive = false;
+    console.log('💠 GAME OVER!');
+    console.log(`Final Score: ${this.score}`);
+    console.log(`Waves Survived: ${this.wave}`);
 
     if (this.hud) {
-      this.hud.showGameOver(this.score, this.wave)
+      this.hud.showGameOver(this.score, this.wave);
     }
   }
 
@@ -315,6 +317,6 @@ export default class GameScene3D {
    * Cleanup and dispose all resources
    */
   dispose() {
-    this.scene.dispose()
+    this.scene.dispose();
   }
 }
