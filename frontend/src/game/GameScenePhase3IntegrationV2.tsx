@@ -24,6 +24,9 @@ export const GameScenePhase3IntegrationV2 = () => {
   const playerMeshRef = useRef<BABYLON.Mesh | null>(null);
   const enemyMeshesRef = useRef<BABYLON.Mesh[]>([]);
 
+  import { GameLoop } from './GameLoop';
+  import { DifficultyLevel } from './EnemyAIDifficulty';
+  // import { DifficultyManager } from './EnemyAIDifficulty';
   // AI System States
   const [gameLoop, setGameLoop] = useState<GameLoop | null>(null);
   const [difficulty, setDifficulty] = useState<DifficultyLevel>(DifficultyLevel.MEDIUM);
