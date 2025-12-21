@@ -45,9 +45,9 @@ describe('CombatEngine.resolveCombatAction', () => {
 
     const action: CombatAction = { type: 'power-attack', attacker, target };
     const res = resolveCombatAction(action);
-    // final damage = 20 * 1.5 = 30; actual = max(1, 30 - 5*0.5 = 27)
+    // final damage = 20 * 1.5 = 30; actual = max(1, 30 - 5*0.5 = 27.5 => rounded 28)
     expect(res.hit).toBe(true);
-    expect(res.damageDealt).toBe(27);
+    expect(res.damageDealt).toBe(28);
     expect(attacker.stats.stamina).toBeLessThan(100);
   });
 

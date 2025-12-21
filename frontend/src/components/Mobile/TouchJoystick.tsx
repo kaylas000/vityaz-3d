@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import '../../../styles/mobile.css';
+import '../../styles/mobile.css';
 
 interface JoystickPosition {
   x: number;

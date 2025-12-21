@@ -135,7 +135,7 @@ export const MAPS: Record<string, Map> = {
       { id: 'tree-2', type: 'cover', position: { x: 600, y: 200 }, size: { x: 50, y: 50 } },
       { id: 'tree-3', type: 'cover', position: { x: 400, y: 500 }, size: { x: 50, y: 50 } },
       { id: 'tree-4', type: 'cover', position: { x: 800, y: 700 }, size: { x: 50, y: 50 } },
-      { id: tree-5', type: 'cover', position: { x: 900, y: 400 }, size: { x: 50, y: 50 } },
+      { id: 'tree-5', type: 'cover', position: { x: 900, y: 400 }, size: { x: 50, y: 50 } },
       { id: 'tree-6', type: 'cover', position: { x: 500, y: 900 }, size: { x: 50, y: 50 } },
 
       // Hazard: toxic gas

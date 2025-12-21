@@ -15,7 +15,7 @@ export interface Tile {
  * 50x50 unit arena with physics boundaries
  */
 export class Arena {
-  private scene: BABYLON.Scene;
+  private scene: BABYLON.Scene | null = null;
   private floorMesh: BABYLON.Mesh | null = null;
   private wallMeshes: BABYLON.Mesh[] = [];
   private spawnPoints: BABYLON.Vector3[] = [];
@@ -23,10 +23,13 @@ export class Arena {
   // grid of tiles (width x height)
   public grid: Tile[][] = [];
 
-  constructor(scene: BABYLON.Scene, width: number = 50, height: number = 50) {
-    this.scene = scene;
+  constructor(scene?: BABYLON.Scene | null, width: number = 50, height: number = 50) {
+    this.scene = scene ?? null;
     this.generateArena(width, height);
-    this.createArenaEnvironment(width, height);
+    // Only create visual meshes if a valid scene is provided
+    if (this.scene && typeof (this.scene as any).getEngine === 'function') {
+      this.createArenaEnvironment(width, height);
+    }
   }
 
   /**
