@@ -34,7 +34,8 @@ export const GameScene: React.FC<GameSceneProps> = ({
 
         addLog('🔍 Step 2: Importing Babylon.js...');
         const babylon = await import('@babylonjs/core');
-        addLog('✓ Babylon.js imported');
+        await import('@babylonjs/loaders');
+        addLog('✓ Babylon.js imported (with loaders)');
 
         addLog('🔍 Step 3: Creating engine...');
         const engine = new babylon.Engine(canvasRef.current, true, {
@@ -89,14 +90,40 @@ export const GameScene: React.FC<GameSceneProps> = ({
         playerBox.checkCollisions = true;
         addLog('✓ Player created');
 
-        addLog('🔍 Step 9: Creating enemy...');
-        const enemyBox = babylon.MeshBuilder.CreateBox('enemy', { size: 1.5 }, scene);
-        enemyBox.position.set(10, 1, 10);
-        const enemyMaterial = new babylon.StandardMaterial('enemyMat', scene);
-        enemyMaterial.diffuse = new babylon.Color3(1, 0, 0);
-        enemyBox.material = enemyMaterial;
-        enemyBox.checkCollisions = true;
-        addLog('✓ Enemy created');
+        addLog('🔍 Step 9: Loading enemy 3D model...');
+        let enemyMesh: any = null;
+
+        try {
+          const enemyImport = await babylon.SceneLoader.ImportMeshAsync(
+            '',
+            './assets/models/',
+            'soldier.glb',
+            scene
+          );
+
+          enemyMesh =
+            enemyImport.meshes.find((m: any) => m.name !== '__root__') ||
+            enemyImport.meshes[0];
+
+          enemyMesh.position.set(10, 0, 10);
+          enemyMesh.checkCollisions = true;
+
+          addLog('✓ Enemy 3D model loaded successfully');
+        } catch (modelError) {
+          const msg = modelError instanceof Error ? modelError.message : String(modelError);
+          addLog('⚠️  Failed to load 3D model, using box fallback: ' + msg);
+          console.error('Enemy model load error:', modelError);
+
+          const enemyBox = babylon.MeshBuilder.CreateBox('enemy', { size: 1.5 }, scene);
+          enemyBox.position.set(10, 1, 10);
+          const enemyMaterial = new babylon.StandardMaterial('enemyMat', scene);
+          enemyMaterial.diffuse = new babylon.Color3(1, 0, 0);
+          enemyBox.material = enemyMaterial;
+          enemyBox.checkCollisions = true;
+
+          enemyMesh = enemyBox;
+          addLog('✓ Enemy fallback box created');
+        }
 
         addLog('🔍 Step 10: Setting up input...');
         const keys: { [key: string]: boolean } = {};
@@ -123,11 +150,13 @@ export const GameScene: React.FC<GameSceneProps> = ({
           if (keys['a'] || keys['arrowleft']) playerBox.position.x -= moveSpeed * deltaTime;
           if (keys['d'] || keys['arrowright']) playerBox.position.x += moveSpeed * deltaTime;
 
-          const dirToPlayer = playerBox.position.subtract(enemyBox.position);
-          const dist = babylon.Vector3.Distance(playerBox.position, enemyBox.position);
-          if (dist > 2) {
-            const direction = dirToPlayer.normalize();
-            enemyBox.position.addInPlace(direction.scale(0.1 * deltaTime));
+          if (enemyMesh) {
+            const dirToPlayer = playerBox.position.subtract(enemyMesh.position);
+            const dist = babylon.Vector3.Distance(playerBox.position, enemyMesh.position);
+            if (dist > 2) {
+              const direction = dirToPlayer.normalize();
+              enemyMesh.position.addInPlace(direction.scale(0.1 * deltaTime));
+            }
           }
 
           scene.render();
