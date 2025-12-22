@@ -7,6 +7,7 @@ export default class Projectile {
   damage: number = GAME_CONFIG.PROJECTILE_DAMAGE
   lifetime: number = GAME_CONFIG.PROJECTILE_LIFETIME
   createdAt: number
+  isActive: boolean = true
 
   constructor(scene: BABYLON.Scene, startPos: BABYLON.Vector3, direction: BABYLON.Vector3) {
     // Create mesh (sphere as bullet)
@@ -23,10 +24,14 @@ export default class Projectile {
     this.mesh.material = material
 
     // Velocity (normalized direction * speed)
-    this.velocity = direction.normalize().scale(GAME_CONFIG.PROJECTILE_SPEED)
+    const normalizedDir = direction.normalize()
+    this.velocity = normalizedDir.scale(GAME_CONFIG.PROJECTILE_SPEED)
     this.createdAt = Date.now()
 
-    console.log('✅ Projectile created')
+    console.log(
+      `✅ Projectile created at (${startPos.x.toFixed(1)}, ${startPos.y.toFixed(1)}, ${startPos.z.toFixed(1)}) ` +
+      `with direction (${normalizedDir.x.toFixed(2)}, ${normalizedDir.y.toFixed(2)}, ${normalizedDir.z.toFixed(2)})`
+    )
   }
 
   /**
@@ -35,11 +40,15 @@ export default class Projectile {
    * @returns true if projectile is alive, false if should be removed
    */
   update(deltaTime: number): boolean {
+    if (!this.isActive) return false
+
     // Move projectile
-    this.mesh.position.addInPlace(this.velocity.scale(deltaTime / 1000))
+    const movement = this.velocity.scale(deltaTime / 1000)
+    this.mesh.position.addInPlace(movement)
 
     // Check lifetime
-    if (Date.now() - this.createdAt > this.lifetime) {
+    const elapsed = Date.now() - this.createdAt
+    if (elapsed > this.lifetime) {
       this.dispose()
       return false
     }
@@ -48,9 +57,22 @@ export default class Projectile {
   }
 
   /**
+   * Mark projectile for removal (used by collision system)
+   */
+  markForRemoval() {
+    this.isActive = false
+    this.dispose()
+  }
+
+  /**
    * Cleanup resources
    */
   dispose() {
-    this.mesh.dispose()
+    try {
+      this.mesh.dispose()
+      console.log('🗑️ Projectile disposed')
+    } catch (e) {
+      console.error('❌ Error disposing projectile:', e)
+    }
   }
 }
