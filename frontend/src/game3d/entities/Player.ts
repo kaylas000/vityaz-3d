@@ -1,14 +1,16 @@
 import * as BABYLON from 'babylon.js'
 import { GAME_CONFIG, COLORS } from '../utils/constants'
+import { ModelLoader } from '../utils/model-loader'
 
 export default class Player {
   mesh: BABYLON.Mesh
   health: number
   maxHealth: number
   speed: number = GAME_CONFIG.PLAYER_SPEED
+  private modelLoaded: boolean = false
 
   constructor(scene: BABYLON.Scene, startPos: { x: number; y: number; z: number }) {
-    // Create mesh (simple cube as placeholder for 3D model later)
+    // Create temporary placeholder mesh
     this.mesh = BABYLON.MeshBuilder.CreateBox('player', { size: 1 }, scene)
     this.mesh.position = new BABYLON.Vector3(startPos.x, startPos.y, startPos.z)
 
@@ -25,7 +27,54 @@ export default class Player {
     this.health = GAME_CONFIG.PLAYER_HEALTH
     this.maxHealth = GAME_CONFIG.PLAYER_HEALTH
 
+    // Load 3D model asynchronously
+    this.loadModel(scene, startPos)
+
     console.log('✅ Player created')
+  }
+
+  /**
+   * Load 3D character model asynchronously
+   * @param scene - Babylon.js scene
+   * @param startPos - Starting position
+   */
+  private async loadModel(
+    scene: BABYLON.Scene,
+    startPos: { x: number; y: number; z: number }
+  ): Promise<void> {
+    try {
+      const characterModel = await ModelLoader.loadCharacterModel(
+        scene,
+        '/models/soldier.glb',
+        'player_model'
+      )
+
+      // Scale and position the model
+      ModelLoader.scaleModel(characterModel, GAME_CONFIG.PLAYER_MODEL_SCALE || 1)
+      ModelLoader.positionModel(
+        characterModel,
+        new BABYLON.Vector3(startPos.x, startPos.y, startPos.z)
+      )
+
+      // Dispose the old placeholder mesh
+      this.mesh.dispose()
+
+      // Use the loaded model as the player mesh
+      this.mesh = characterModel
+      this.modelLoaded = true
+
+      console.log('🎮 Player model loaded successfully')
+    } catch (error) {
+      console.warn('⚠️ Failed to load player model, using placeholder:', error)
+      // Keep using the placeholder cube if model fails to load
+    }
+  }
+
+  /**
+   * Check if model is loaded
+   */
+  isModelLoaded(): boolean {
+    return this.modelLoaded
   }
 
   /**
