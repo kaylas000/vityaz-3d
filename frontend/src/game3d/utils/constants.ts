@@ -11,7 +11,7 @@ export const GAME_CONFIG = {
   GRAVITY: -9.81,
 
   // Player
-  PLAYER_SPEED: 200,
+  PLAYER_SPEED: 75, // units per second (increased from 200 for better control)
   PLAYER_HEALTH: 100,
   PLAYER_START_POS: { x: 0, y: 1, z: 0 },
 
@@ -36,7 +36,11 @@ export const GAME_CONFIG = {
   WAVE_DIFFICULTY_MULTIPLIER: 1.5,
 
   // Collision
-  COLLISION_DISTANCE: 1.0, // FIXED: optimized for entity sizes
+  COLLISION_DISTANCE: 1.0, // optimized for entity sizes
+
+  // Camera
+  CAMERA_FOLLOW_SMOOTH: 0.2, // 0-1, higher = more responsive
+  CAMERA_HEIGHT_OFFSET: 1.5, // eyes above player position
 }
 
 export const COLORS = {
