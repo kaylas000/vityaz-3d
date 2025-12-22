@@ -34,7 +34,6 @@ export default class GameScene3D {
   mousePos: { x: number; y: number } = { x: 0, y: 0 };
   lastShootTime: number = 0;
   lastInputLog: number = 0;
-  isMouseDown: boolean = false;
 
   constructor(canvas: HTMLCanvasElement, engine: BABYLON.Engine) {
     this.canvas = canvas;
@@ -120,19 +119,20 @@ export default class GameScene3D {
     // Keyboard input (WASD, Space, etc.)
     this.scene.onKeyboardObservable.add((kbInfo) => {
       const key = kbInfo.event.key.toUpperCase();
+      const code = kbInfo.event.code; // Use code for spacebar detection
 
       if (kbInfo.type === BABYLON.KeyboardEventTypes.KEYDOWN) {
         this.inputMap[key] = true;
 
-        // Spacebar for shooting
-        if (key === ' ') {
+        // Spacebar for shooting - use code instead of key
+        if (code === 'Space' || key === ' ') {
           this.shoot();
           console.log('🔫 SPACEBAR SHOOT');
         }
 
-        // Debug: Log key press
+        // Debug: Log key press (throttled)
         if (Date.now() - this.lastInputLog > 500) {
-          console.log(`🎮 Key pressed: ${key}`);
+          console.log(`🎮 Key pressed: ${key} (code: ${code})`);
           this.lastInputLog = Date.now();
         }
       } else if (kbInfo.type === BABYLON.KeyboardEventTypes.KEYUP) {
@@ -149,17 +149,9 @@ export default class GameScene3D {
         };
       }
 
-      // Mouse down - start shooting
       if (pointerInfo.type === BABYLON.PointerEventTypes.POINTERDOWN) {
-        this.isMouseDown = true;
         console.log('🖱️ Mouse down - LMB SHOOT');
         this.shoot();
-      }
-
-      // Mouse up - stop shooting
-      if (pointerInfo.type === BABYLON.PointerEventTypes.POINTERUP) {
-        this.isMouseDown = false;
-        console.log('🖱️ Mouse up');
       }
     });
   }
@@ -315,42 +307,23 @@ export default class GameScene3D {
 
   /**
    * Shoot projectile from camera forward direction
-   * Improved with better debugging and error handling
    */
   private shoot() {
     const now = Date.now();
-    
-    // Check cooldown
-    if (now - this.lastShootTime < GAME_CONFIG.SHOOT_COOLDOWN) {
-      console.log(`⏳ Shoot cooldown: ${Math.ceil((GAME_CONFIG.SHOOT_COOLDOWN - (now - this.lastShootTime)) / 100) / 10}s remaining`);
-      return;
-    }
-    
-    if (!this.camera) {
-      console.error('❌ Camera not initialized');
-      return;
-    }
-    
-    if (!this.player) {
-      console.error('❌ Player not initialized');
-      return;
-    }
+    if (now - this.lastShootTime < GAME_CONFIG.SHOOT_COOLDOWN) return;
+    if (!this.camera || !this.player) return;
 
     this.lastShootTime = now;
 
-    try {
-      const startPos = this.camera.position.clone();
-      const direction = BABYLON.Vector3.Forward().applyRotationQuaternionInPlace(
-        this.camera.absoluteRotation
-      );
+    const startPos = this.camera.position.clone();
+    const direction = BABYLON.Vector3.Forward().applyRotationQuaternionInPlace(
+      this.camera.absoluteRotation
+    );
 
-      const projectile = new Projectile(this.scene, startPos, direction);
-      this.projectiles.push(projectile);
+    const projectile = new Projectile(this.scene, startPos, direction);
+    this.projectiles.push(projectile);
 
-      console.log(`🔫 SHOT! Total projectiles: ${this.projectiles.length}`);
-    } catch (error) {
-      console.error('❌ Error creating projectile:', error);
-    }
+    console.log('🔫 Shot fired!');
   }
 
   /**
