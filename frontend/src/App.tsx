@@ -19,6 +19,7 @@ const App: React.FC = () => {
         if (!canvasRef.current) return;
         
         const babylon = await import('@babylonjs/core');
+        await import('@babylonjs/loaders');
         
         const engine = new babylon.Engine(canvasRef.current, true);
         const scene = new babylon.Scene(engine);
@@ -46,11 +47,30 @@ const App: React.FC = () => {
         pmat.diffuse = new babylon.Color3(0, 0.5, 1);
         player.material = pmat;
         
-        const enemy = babylon.MeshBuilder.CreateBox('enemy', { size: 1.5 }, scene);
-        enemy.position.set(10, 1, 10);
-        const emat = new babylon.StandardMaterial('emat', scene);
-        emat.diffuse = new babylon.Color3(1, 0, 0);
-        enemy.material = emat;
+        // Попытка загрузить 3D модель врага
+        let enemy: any = null;
+        try {
+          console.log('🔍 Attempting to load 3D enemy model...');
+          const enemyImport = await babylon.SceneLoader.ImportMeshAsync(
+            '',
+            './assets/models/',
+            'soldier.glb',
+            scene
+          );
+          
+          enemy = enemyImport.meshes.find((m: any) => m.name !== '__root__') || enemyImport.meshes[0];
+          enemy.position.set(10, 0, 10);
+          console.log('✅ Enemy 3D model loaded successfully!');
+        } catch (modelError) {
+          console.warn('⚠️ Failed to load 3D model, using fallback box:', modelError);
+          // Fallback: использовать простой бокс
+          enemy = babylon.MeshBuilder.CreateBox('enemy', { size: 1.5 }, scene);
+          enemy.position.set(10, 1, 10);
+          const emat = new babylon.StandardMaterial('emat', scene);
+          emat.diffuse = new babylon.Color3(1, 0, 0);
+          enemy.material = emat;
+          console.log('✅ Enemy fallback box created');
+        }
         
         const keys: { [key: string]: boolean } = {};
         window.addEventListener('keydown', (e) => { keys[e.key.toLowerCase()] = true; });
@@ -68,11 +88,13 @@ const App: React.FC = () => {
           if (keys['a'] || keys['arrowleft']) player.position.x -= speed * dt;
           if (keys['d'] || keys['arrowright']) player.position.x += speed * dt;
           
-          const dir = player.position.subtract(enemy.position);
-          const dist = babylon.Vector3.Distance(player.position, enemy.position);
-          if (dist > 2) {
-            const norm = dir.normalize();
-            enemy.position.addInPlace(norm.scale(0.1 * dt));
+          if (enemy) {
+            const dir = player.position.subtract(enemy.position);
+            const dist = babylon.Vector3.Distance(player.position, enemy.position);
+            if (dist > 2) {
+              const norm = dir.normalize();
+              enemy.position.addInPlace(norm.scale(0.1 * dt));
+            }
           }
           
           scene.render();
