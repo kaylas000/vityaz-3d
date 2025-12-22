@@ -14,6 +14,7 @@ export const GAME_CONFIG = {
   PLAYER_SPEED: 200,
   PLAYER_HEALTH: 100,
   PLAYER_START_POS: { x: 0, y: 1, z: 0 },
+  PLAYER_MODEL_SCALE: 1.0, // Scale factor for loaded 3D model
 
   // Enemy
   ENEMY_BASIC_SPEED: 100,
@@ -24,6 +25,7 @@ export const GAME_CONFIG = {
   ENEMY_TANK_DAMAGE: 15,
   ENEMY_SPAWN_DISTANCE: 20,
   ENEMY_ATTACK_COOLDOWN: 1000, // 1 sec between attacks
+  ENEMY_MODEL_SCALE: 1.0, // Scale factor for loaded 3D model
 
   // Projectile
   PROJECTILE_SPEED: 100,
