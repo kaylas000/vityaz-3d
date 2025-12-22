@@ -33,6 +33,7 @@ export default class GameScene3D {
   inputMap: { [key: string]: boolean } = {};
   mousePos: { x: number; y: number } = { x: 0, y: 0 };
   lastShootTime: number = 0;
+  lastInputLog: number = 0;
 
   constructor(canvas: HTMLCanvasElement, engine: BABYLON.Engine) {
     this.canvas = canvas;
@@ -45,6 +46,7 @@ export default class GameScene3D {
     this.startGameLoop();
 
     console.log('✅ GameScene3D initialized');
+    console.log('📖 Press W/A/S/D to move, hold click to look around, click to shoot');
   }
 
   /**
@@ -92,6 +94,8 @@ export default class GameScene3D {
     this.camera.attachControl(this.canvas, true);
     this.camera.inertia = 0.7;
     this.camera.angularSensibility = 1000;
+    // Set speed to 0 - we'll control camera manually via player position
+    this.camera.speed = 0;
 
     // Create player
     this.player = new Player(this.scene, GAME_CONFIG.PLAYER_START_POS);
@@ -118,6 +122,11 @@ export default class GameScene3D {
 
       if (kbInfo.type === BABYLON.KeyboardEventTypes.KEYDOWN) {
         this.inputMap[key] = true;
+        // Debug: Log key press
+        if (Date.now() - this.lastInputLog > 500) {
+          console.log(`🎮 Key pressed: ${key}`);
+          this.lastInputLog = Date.now();
+        }
       } else if (kbInfo.type === BABYLON.KeyboardEventTypes.KEYUP) {
         this.inputMap[key] = false;
       }
@@ -162,10 +171,17 @@ export default class GameScene3D {
     if (this.player) {
       this.player.update(this.inputMap, deltaTime);
 
-      // Move camera to follow player
+      // Move camera to follow player (FPS-style)
       if (this.camera) {
-        this.camera.position = this.player.mesh.position.add(
-          new BABYLON.Vector3(0, 1.5, 0)
+        // Camera offset from player (eyes height)
+        const cameraOffset = new BABYLON.Vector3(0, 1.5, 0);
+        const targetCameraPos = this.player.mesh.position.add(cameraOffset);
+        
+        // Smooth camera follow
+        this.camera.position = BABYLON.Vector3.Lerp(
+          this.camera.position,
+          targetCameraPos,
+          0.2 // Smoothing factor
         );
       }
     }
@@ -186,6 +202,7 @@ export default class GameScene3D {
     // Wave management: spawn next wave when all enemies are defeated
     if (this.enemies.length === 0 && this.gameActive) {
       this.wave++;
+      console.log(`⬆️ Wave increased to ${this.wave}`);
       this.spawnWave(this.wave);
     }
 
@@ -227,6 +244,7 @@ export default class GameScene3D {
             enemy.dispose();
             this.enemies.splice(j, 1);
             this.score += enemy.type === 'tank' ? 200 : 100;
+            console.log(`🎯 Enemy killed! Score: ${this.score}`);
           }
           break;
         }
